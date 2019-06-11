@@ -1,0 +1,5 @@
+From the paper: 
+Haplotypes of these SNPs were inferred for each species separately by FASTPHASE (Scheet & Stephens, 2006) 
+using default parameters except for the maximum number of EM iteration that was set to 50. The subpopulation 
+option was used to specify four populations within species. Five, 10 and 15 clusters of haplotypes were 
+considered for determining the number of haplotype clusters.
