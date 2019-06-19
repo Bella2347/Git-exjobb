@@ -3,7 +3,7 @@
 #SBATCH -p core
 #SBATCH -n 1
 #SBATCH -t 00:30:00
-#SBATCH -J missing stats
+#SBATCH -J missing_stats
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user bsm.sinclair@gmail.com
 
