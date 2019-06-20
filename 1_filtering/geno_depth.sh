@@ -9,5 +9,5 @@
 
 module load bioinfo-tools vcftools/0.1.15
 
-vcftools --vcf ../parva_filtered_maxdp95_mindp5.recode.vcf --out parva_maxdp95_mindp5 --geno-depth
+vcftools --vcf ../3_removed_sites_with_missing-genotype/parva_filtered_maxMissing.recode.vcf --out parva_maxMissing --geno-depth
 
