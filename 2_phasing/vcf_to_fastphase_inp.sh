@@ -9,5 +9,5 @@
 
 module load bioinfo-tools plink/1.90b4.9
 
-plink --vcf ../1_filtering/3_removed_sites_with_missing-genotype/parva_filtered_maxMissing.recode.vcf --out parva_plink --recode fastphase-1chr
+plink --vcf ../1_filtering/1_genotype_depth/parva_filtered_n00001.vcf --out parva_plink_n00001 --recode fastphase-1chr
 
