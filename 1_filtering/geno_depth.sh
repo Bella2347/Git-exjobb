@@ -9,5 +9,5 @@
 
 module load bioinfo-tools vcftools/0.1.15
 
-vcftools --vcf ../3_removed_sites_with_missing-genotype/parva_filtered_maxMissing.recode.vcf --out parva_maxMissing --geno-depth
+vcftools --vcf ../3_removed_sites_with_missing-genotype/parva_filtered_maxMissing_90.recode.vcf --out parva_maxMissing --get-INFO GT --get-INFO DB
 
