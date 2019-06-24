@@ -9,5 +9,5 @@
 
 module load bioinfo-tools plink/1.90b4.9
 
-plink --vcf chrFal34.vcf --out parva_plink_chrFal34 --recode fastphase --allow-extra-chr
+plink --vcf parva_chrContigs.vcf --out parva_plink_chrContigs --recode fastphase --allow-extra-chr
 
