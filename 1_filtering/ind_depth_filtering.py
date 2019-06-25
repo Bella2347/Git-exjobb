@@ -1,55 +1,58 @@
-# mock script
+import sys
+import re
+from operator import eq
 
-# input: script.py vcf-file mask-file out-file
+if not len(sys.argv)==4:
+	print("\nError:\tincorrect number of command-line arguments")
+	print("Syntax:\tind_depth_filtering.py [Input VCF] [Depth File] [Output VCF]\n")
+	sys.exit()
 
-# mask-file
-# chr	pos	ind_#
-# ex
-# 1	10	2 7 9
-# 2	15	1 2
-# ...
+if sys.argv[1]==sys.argv[3]:
+	print("Error:\tInput file is the same as the output file - choose a different output file\n")
+	sys.exit()
 
-
-
-# Read in files to read and write to out
-open(vcf-file, read)
-open(mask-file, read)
-open(out-file, write)
+# Read in vcf file and depth file
+vcf = open(sys.argv[1], 'r')
+max_depths = open(sys.argv[2], 'r')
+out = open(sys.argv[3], 'w+')
 
 
-# For each line in the file with the genotypes to mask split into two
-for line in mask:
-	mask_hash = line.split('\t', 3)
+max_depth_list = []
+# split the depths into a list
+for line in max_depths:
+	if not line.startswith('#'):
+		max_depth_list.append(line.strip('\n'))
 
+max_depths.close()
+
+print("Max depths to be used:")
+print(max_depth_list)
+
+print("Masking sites...")
 for line in vcf:
 	# If it starts with info lines, keep those
-	if line '^#':
-		write to out
+	if line.startswith('#'):
+		out.write(line)
 	else:
 		# Split into columns
-		row = line.split('\t')
-		i = 0
-		# Go through all rows in the mask-file
-		while true:
-			i = i + 1
-			# If the chromosome match...
-			if mask_hash[1,i] == row[1]:
-				# and the position...
-				if mask_hash[2,i] == row[2]:
-					# Split the last field in the mask_hash on space to get the sample to mask
-					mask_geno = mask_hash[3].split(" ")
-					# Go though all samples that will be masked
-					for n in mask_geno:
-						# mask_geno[n] contains a number, take that numbered column (ish)
-						# find the genotype and replace it with './.' masking it
-						row[mask_geno[n]] = sub('\d/\d:','./.:', row[mask_geno[n]])
-					write row to out
-					# the position is found, no need to look through the rest of mask_hash
-					false
+		columns = line.split('\t')
+		if not len(columns)-9 == len(max_depth_list):
+			print("Error:\tNumber of samples in VCF does not match number of samples in depth file\n")
+			sys.exit()
 
+		depths = []
+		for i in range(9,len(columns)):
+			depths.append(columns[i].split(':')[2])
+		# Generate list with true and false if samples dp is larger than filter dp for that
+		logi_list = []
+		for i in range(len(max_depth_list)):
+			logi_list.append(depths[i] > max_depth_list[i])
+		for i in range(len(logi_list)):
+			if logi_list[i]:
+				columns[i+9] = re.sub('\d/\d:','./.:', columns[i+9])
+		masked_line = '\t'.join(columns)
+		out.write(masked_line)
 
+vcf.close()
 
-
-
-
-
+print("Done!")
