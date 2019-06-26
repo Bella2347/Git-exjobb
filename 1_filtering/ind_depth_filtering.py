@@ -21,22 +21,22 @@ if sys.argv[1]==sys.argv[3]:
 
 # Read in vcf file and depth file
 vcf = open(sys.argv[1], 'r')
-max_depths = open(sys.argv[2], 'r')
+filter_depths = open(sys.argv[2], 'r')
 # Open the outfile for writing
 out = open(sys.argv[3], 'w+')
 
 
 # Initiate a list with the filtering depths
-max_depth_list = []
+filter_depth_list = []
 # Save the filtering depths from the depth-file to the list
-for line in max_depths:
+for line in filter_depths:
 	if not line.startswith('#'):
-		max_depth_list.append(float(line.strip('\n')))
+		filter_depth_list.append(float(line.strip('\n')))
 
-max_depths.close()
+filter_depths.close()
 
-print("Max depths to be used:")
-print(max_depth_list*3)
+print("Avg depths to be used:")
+print(filter_depth_list)
 
 
 start = time.time()
@@ -51,7 +51,7 @@ for line in vcf:
 		# Split the variant lines into columns
 		columns = line.strip('\n').split('\t')
 		# In the 10th column the info for each sample start, check that the number of samples in the vcf and depth-file are the same
-		if not len(columns)-9 == len(max_depth_list):
+		if not len(columns)-9 == len(filter_depth_list):
 			print("Error:\tNumber of samples in VCF does not match number of samples in depth file\n")
 			sys.exit()
 		# Initiate a list for the depth of each sample for a variant
@@ -60,9 +60,9 @@ for line in vcf:
 		for i in range(9,len(columns)):
 			depths.append(columns[i].split(':')[2])
 		# If the depth for that variant is larger than the value for that sample in the depth-file the genotype is masked
-		for i in range(len(max_depth_list)):
+		for i in range(len(filter_depth_list)):
 			if isfloat(depths[i]):
-				if float(depths[i]) > 3*max_depth_list[i]:
+				if float(depths[i]) > 3*filter_depth_list[i]:
 					columns[i+9] = re.sub('\d/\d:','./.:', columns[i+9])
 		# Join all columns again, tab-separated
 		masked_line = '\t'.join(columns)
