@@ -3,6 +3,14 @@ import re
 import time
 from operator import eq
 
+def isfloat(value):
+# Method to check if string can be converted to a float
+	try:
+		float(value)
+		return True
+	except ValueError:
+		return False
+
 if not len(sys.argv)==4:
 	print("\nError:\tincorrect number of command-line arguments")
 	print("Syntax:\tind_depth_filtering.py [Input VCF] [Depth File] [Output VCF]\n")
@@ -28,7 +36,7 @@ for line in max_depths:
 max_depths.close()
 
 print("Max depths to be used:")
-print(max_depth_list)
+print(max_depth_list*3)
 
 
 start = time.time()
@@ -50,11 +58,12 @@ for line in vcf:
 		depths = []
 		# Step through all sample columns and extract the DP (3rd field)
 		for i in range(9,len(columns)):
-			depths.append(float(columns[i].split(':')[2]))
+			depths.append(columns[i].split(':')[2])
 		# If the depth for that variant is larger than the value for that sample in the depth-file the genotype is masked
 		for i in range(len(max_depth_list)):
-			if depths[i] > 3*max_depth_list[i]:
-				columns[i+9] = re.sub('\d/\d:','./.:', columns[i+9])
+			if isfloat(depths[i]):
+				if float(depths[i]) > 3*max_depth_list[i]:
+					columns[i+9] = re.sub('\d/\d:','./.:', columns[i+9])
 		# Join all columns again, tab-separated
 		masked_line = '\t'.join(columns)
 		# Write the filtered line to the out-file
