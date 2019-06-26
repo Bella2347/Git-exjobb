@@ -1,6 +1,6 @@
 library(vcfR)
 
-vcf <- read.vcfR("../4_test_ind_depth_filter/taiga_n00001_filtered.vcf")
+vcf <- read.vcfR("../4_test_ind_depth_filter/parva_n00001_filtered.vcf")
 
 dp <- extract.gt(vcf, element="DP", as.numeric=TRUE)
 dp_df <- as.data.frame(dp)
@@ -18,8 +18,10 @@ logi <- data.frame(matrix(logi, nrow=n[1], ncol=n[2]))
 dp_df[!logi] <- ""
 dp_df[] <- lapply(dp_df, as.numeric)
 
-png("taiga_filtered_dp_n00001.png", width=500, height=350, unit="px")
-boxplot(dp_df, use.cols=TRUE, names=colnames(dp_df))
-title(main="Filtered variant depth for N00001 in Taiga", ylab="DP", xlab="Samples")
+
+png("parva_filtered_dp_n00001.png")
+par(mar=c(9,4,1,4))
+boxplot(dp_df, las=2)
+title(main="Filtered variant depth for N00001 in Parva", ylab="DP")
 dev.off()
 
