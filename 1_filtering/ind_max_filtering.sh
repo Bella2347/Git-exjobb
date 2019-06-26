@@ -7,4 +7,4 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user bsm.sinclair@gmail.com
 
-python3 ../../Git-exjobb/1_filtering/ind_depth_filtering.py ../1_genotype_depth/parva_unfiltered_n00001.vcf depth parva_n00001_filtered.vcf
+python3 ../../Git-exjobb/1_filtering/ind_depth_filtering.py ../1_genotype_depth/parva_unfiltered_n00001.vcf parva_depth.txt parva_n00001_filtered.vcf
