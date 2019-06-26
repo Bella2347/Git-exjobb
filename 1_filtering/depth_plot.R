@@ -1,23 +1,25 @@
 library(vcfR)
 
-parva_n00001 <- read.vcfR("parva_filtered_n00001.vcf")
+vcf <- read.vcfR("../4_test_ind_depth_filter/taiga_n00001_filtered.vcf")
 
-parva_n00001_dp <- extract.gt(parva_n00001, element="DP", as.numeric=TRUE)
-parva_n00001_dp_df <- as.data.frame(parva_n00001_dp)
-n <- dim(parva_n00001_dp_df)
+dp <- extract.gt(vcf, element="DP", as.numeric=TRUE)
+dp_df <- as.data.frame(dp)
+n <- dim(dp_df)
 
 
-parva_n00001_gt <- extract.gt(parva_n00001, element="GT", as.numeric=FALSE)
-parva_n00001_gt[is.na(parva_n00001_gt)] <- FALSE
-parva_n00001_gt[parva_n00001_gt != FALSE] <- TRUE
-parva_n00001_logi <- as.logical(parva_n00001_gt)
-parva_n00001_logi <- data.frame(matrix(parva_n00001_logi, nrow=n[1], ncol=n[2]))
-colnames(parva_n00001_logi) <- colnames(parva_n00001_dp_df)
-row.names(parva_n00001_logi) <- row.names(parva_n00001_dp_df)
+gt <- extract.gt(vcf, element="GT", as.numeric=FALSE)
+gt[is.na(gt)] <- FALSE
+gt[gt != FALSE] <- TRUE
+logi <- as.logical(gt)
+logi <- data.frame(matrix(logi, nrow=n[1], ncol=n[2]))
+#colnames(logi) <- colnames(dp_df)
+#row.names(logi) <- row.names(dp_df)
 
-parva_n00001_dp_df[!parva_n00001_logi] <- ""
-parva_n00001_dp_df[] <- lapply(parva_n00001_dp_df, as.numeric)
+dp_df[!logi] <- ""
+dp_df[] <- lapply(dp_df, as.numeric)
 
-png("parva_dp.png")
-boxplot(parva_n00001_dp_df, use.cols=TRUE)
+png("taiga_filtered_dp_n00001.png", width=500, height=350, unit="px")
+boxplot(dp_df, use.cols=TRUE, names=colnames(dp_df))
+title(main="Filtered variant depth for N00001 in Taiga", ylab="DP", xlab="Samples")
 dev.off()
+
