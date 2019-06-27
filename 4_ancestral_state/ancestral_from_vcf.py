@@ -3,6 +3,7 @@
 
 import sys
 import re
+import time
 
 if not len(sys.argv)==4:
         print("\nError:\tincorrect number of command-line arguments")
@@ -19,12 +20,17 @@ group_file =  open(sys.argv[2], 'r')
 # Open output to write to
 out = open(sys.argv[3], 'w+')
 
+
 # Save the number of individuals for each group in a list
 group_len = [int(line.strip('\n')) for line in group_file]
 
 group_file.close()
 
 out.write('#Chr\tPos\tState\n')
+
+print("Finding the ancestral state...")
+
+t_start = time.time()
 
 for line in vcf:
 	if not line.startswith('#'):
@@ -109,4 +115,8 @@ for line in vcf:
 
 vcf.close()
 out.close()
+
+elapsed = time.time() - t_start
+
+print("Done! Ran in: %.2fs" % elapsed )
 
