@@ -17,6 +17,7 @@ if not len(sys.argv)==4:
 	sys.exit()
 
 if sys.argv[1]==sys.argv[3]:
+	print("\nError:\tinput-file and output-file are the same, choose another output-file\n")
 	sys.exit()
 
 # Read in vcf file and depth file
@@ -52,7 +53,7 @@ for line in vcf:
 		columns = line.strip('\n').split('\t')
 		# In the 10th column the info for each sample start, check that the number of samples in the vcf and depth-file are the same
 		if not len(columns)-9 == len(filter_depth_list):
-			print("Error:\tNumber of samples in VCF does not match number of samples in depth file\n")
+			print("Error:\tNumber of samples in VCF does not match number of samples in depth-file\n")
 			sys.exit()
 		# Initiate a list for the depth of each sample for a variant
 		depths = []
@@ -70,6 +71,7 @@ for line in vcf:
 		out.write(masked_line+"\n")
 
 vcf.close()
+out.close()
 elapsed = time.time() - start
 
 print("Done! Ran in: %.2fs" % elapsed )
