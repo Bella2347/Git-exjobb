@@ -7,13 +7,13 @@ outgroup1_file =  open(sys.argv[3], 'r')
 outgroup2_file =  open(sys.argv[4], 'r')
 
 
-ingroup = [line.strip('\n') for line in ingroup_list]
-outgroup1 = [line.strip('\n') for line in outgroup1_list]
-outgroup2 = [line.strip('\n') for line in outgroup2_list]
+ingroup = [line.strip('\n') for line in ingroup_file]
+outgroup1 = [line.strip('\n') for line in outgroup1_file]
+outgroup2 = [line.strip('\n') for line in outgroup2_file]
 
-sys.close(ingroup_file)
-sys.close(outgroup1_file)
-sys.close(outgroup2_file)
+ingroup_file.close()
+outgroup1_file.close()
+outgroup2_file.close()
 
 print(ingroup, outgroup1, outgroup2)
 
