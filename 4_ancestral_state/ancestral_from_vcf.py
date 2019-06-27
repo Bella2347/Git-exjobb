@@ -4,20 +4,36 @@
 import sys
 import re
 
+if not len(sys.argv)==4:
+        print("\nError:\tincorrect number of command-line arguments")
+        print("Syntax:\tind_depth_filtering.py [Input VCF] [Group File] [Output VCF]\n")
+        sys.exit()
+
+if sys.argv[1]==sys.argv[3]:
+        print("\nError:\tinput-file and output-file are the same, choose another output-file\n")
+        sys.exit()
+
 # Open the input files
 vcf =  open(sys.argv[1], 'r')
 group_file =  open(sys.argv[2], 'r')
+# Open output to write to
+out = open(sys.argv[3], 'w+')
 
 # Save the number of individuals for each group in a list
 group_len = [int(line.strip('\n')) for line in group_file]
 
 group_file.close()
 
+out.write('#Chr\tPos\tState\n')
 
 for line in vcf:
 	if not line.startswith('#'):
 		# Split in to columns
 		columns = line.strip('\n').split('\t')
+
+		if not len(columns) == group_len[0]+group_len[1]+group_len[2]+9:
+                        print("Error:\tNumber of samples in VCF does not match number of samples in group-file\n")
+                        sys.exit()
 
 		# Save the ref and alt alleles
 		alleles = []
@@ -88,7 +104,9 @@ for line in vcf:
 			state = '?'
 		
 		# Print the state and the chr and position
-		out = columns[0] + '\t' + columns[1] + '\t'
-		print(out + state)
+		chr_pos = columns[0] + '\t' + columns[1] + '\t'
+		out.write(chr_pos + state + '\n')
 
+vcf.close()
+out.close()
 
