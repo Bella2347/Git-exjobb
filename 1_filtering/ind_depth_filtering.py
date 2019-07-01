@@ -39,6 +39,8 @@ filter_depths.close()
 print("Avg depths to be used:")
 print(filter_depth_list)
 
+# The max depth is set to the average depth times this number
+times_avg_depth = 2
 
 start = time.time()
 
@@ -63,7 +65,7 @@ for line in vcf:
 		# If the depth for that variant is larger than the value for that sample in the depth-file the genotype is masked
 		for i in range(len(filter_depth_list)):
 			if isfloat(depths[i]):
-				if float(depths[i]) > 3*filter_depth_list[i]:
+				if float(depths[i]) > times_avg_depth*filter_depth_list[i]:
 					columns[i+9] = re.sub('\d/\d:','./.:', columns[i+9])
 		# Join all columns again, tab-separated
 		masked_line = '\t'.join(columns)
