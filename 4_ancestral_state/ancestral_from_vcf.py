@@ -1,5 +1,5 @@
 # Scrip to extract the ancestral state from a vcf file containing individuals from three groups
-# Input is a vcf-file and a group-file which specify the number of individuals in each group, the individuals are assumed to appear in group order
+# Input is a vcf-file and a group-file which specify which group the individuals belong to, the individuals are assumed to appear in the same order as in the vcf
 
 import sys
 import re
@@ -14,10 +14,9 @@ if sys.argv[1]==sys.argv[3]:
         print("\nError:\tinput-file and output-file are the same, choose another output-file\n")
         sys.exit()
 
-# Open the input files
+
 vcf =  open(sys.argv[1], 'r')
 group_file =  open(sys.argv[2], 'r')
-# Open output to write to
 out = open(sys.argv[3], 'w+')
 
 groups = []
@@ -36,12 +35,12 @@ t_start = time.time()
 
 for line in vcf:
 	if not line.startswith('#'):
-		# Split in to columns
 		columns = line.strip('\n').split('\t')
 
 		if not len(columns) == len(groups)+9:
                         print("Error:\tNumber of samples in VCF does not match number of samples in group-file\n")
                         sys.exit()
+
 
 		# Save the ref and alt alleles
 		alleles = []
@@ -51,6 +50,7 @@ for line in vcf:
 			alleles.append(alt)
 
 
+		# Find all genotypes and save in the respective group based on the information in the group-file
 		group1_genotypes = []
 		group2_genotypes = []
 		group3_genotypes = []
@@ -102,7 +102,7 @@ for line in vcf:
 		else:
 			state = '?'
 		
-		# Print the state and the chr and position
+
 		chr_pos = columns[0] + '\t' + columns[1] + '\t'
 		out.write(chr_pos + state + '\n')
 
