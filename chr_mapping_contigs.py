@@ -15,7 +15,8 @@ if sys.argv[1]==sys.argv[3]:
 	print("\nError:\tinput-file and output-file are the same, choose another output-file\n")
 	sys.exit()
 
-
+print("Create VCF with only contigs in contigs file.")
+print("Input file: " + sys.argv[1] + "\nContigs list: " + sys.argv[2] + "\nOut file: " + sys.argv[3])
 
 vcf_in = open(sys.argv[1], 'r')
 contig_file = open(sys.argv[2], 'r')

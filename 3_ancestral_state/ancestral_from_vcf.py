@@ -14,6 +14,7 @@ if sys.argv[1]==sys.argv[3]:
         print("\nError:\tinput-file and output-file are the same, choose another output-file\n")
         sys.exit()
 
+print("Input file: " + sys.argv[1] + "\nGroup file: " + sys.argv[2] + "\nOut file: " + sys.argv[2])
 
 vcf =  open(sys.argv[1], 'r')
 group_file =  open(sys.argv[2], 'r')

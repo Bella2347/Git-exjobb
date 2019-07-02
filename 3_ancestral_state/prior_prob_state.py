@@ -7,6 +7,8 @@ if not len(sys.argv)==2:
         print("Syntax:\tprior_prob_state.py [State File]\n")
         sys.exit()
 
+print("Writing prior probability for the ancestral state.\nInput file: " + sys.argv[1])
+
 # Open file with the ancestral state
 state = open(sys.argv[1], 'r')
 
@@ -21,6 +23,10 @@ for line in state:
 		
 		# Open a new out-file for each contig
 		if not contig == columns[0]:
+			# Skip closing first time since when out is initiated it is a string
+			# I know that it is not pretty code
+			if not out == 'out-file':
+				out.close()
 			contig = columns[0]
 			out = open(contig+'.txt', 'w+')
 			out.write('#Pos\tA\tC\tG\tT\n')
@@ -37,6 +43,9 @@ for line in state:
                 	out.write(columns[1]+'\t'+'0.03\t0.03\t0.91\t0.03\n')
 		if columns[2] == 'T':
                 	out.write(columns[1]+'\t'+'0.03\t0.03\t0.03\t0.91\n')
+
+out.close()
+state.close()
 
 elapsed = time.time() - t_start
 

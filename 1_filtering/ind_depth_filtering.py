@@ -22,6 +22,8 @@ if sys.argv[1]==sys.argv[3]:
 	print("\nError:\tinput-file and output-file are the same, choose another output-file\n")
 	sys.exit()
 
+print("Filter on individual max depth.")
+print("Input file: " + sys.argv[1] + "\nDepth file: " + sys.argv[2] + "\nOut file: " + sys.argv[2])
 
 vcf = open(sys.argv[1], 'r')
 filter_depths = open(sys.argv[2], 'r')
