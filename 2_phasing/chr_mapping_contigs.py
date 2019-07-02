@@ -4,9 +4,19 @@ import sys
 import re
 
 
+if not len(sys.argv)==4:
+	print("\nError:\tincorrect number of command-line arguments")
+	print("Syntax:\tind_depth_filtering.py [Input VCF] [Contig List] [Output VCF]\n")
+	sys.exit()
+
+if sys.argv[1]==sys.argv[3]:
+	print("\nError:\tinput-file and output-file are the same, choose another output-file\n")
+	sys.exit()
+
+
 vcf_in = open(sys.argv[1], 'r')
 contig_file = open(sys.argv[2], 'r')
-vcf_out = open(sys.argv[3], 'r')
+vcf_out = open(sys.argv[3], 'w+')
 
 
 contigs_list = []
