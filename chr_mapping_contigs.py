@@ -2,6 +2,8 @@
 
 import sys
 import re
+import time
+
 
 
 if not len(sys.argv)==4:
@@ -14,9 +16,17 @@ if sys.argv[1]==sys.argv[3]:
 	sys.exit()
 
 
+
 vcf_in = open(sys.argv[1], 'r')
 contig_file = open(sys.argv[2], 'r')
 vcf_out = open(sys.argv[3], 'w+')
+
+
+
+t_start = time.time()
+
+print("Reading contigs file...")
+
 
 
 contigs_list = []
@@ -27,6 +37,9 @@ for line in contig_file:
 
 contig_file.close()
 
+
+
+print("Writing lines to out file...")
 
 for line in vcf_in:
 	line = line.strip('\n')
@@ -44,5 +57,12 @@ for line in vcf_in:
 		if columns[0] in contigs_list:
 			vcf_out.write(line+'\n')
 
+vcf_in.close()
+vcf_out.close()
 
+
+
+elapsed = time.time() - t_start
+
+print("Done! Ran in: %.2fs" % elapsed )
 
