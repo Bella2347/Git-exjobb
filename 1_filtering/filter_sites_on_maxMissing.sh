@@ -9,7 +9,5 @@
 
 module load bioinfo-tools vcftools/0.1.15
 
-vcftools --vcf parva_n00001_filtered.vcf --max-missing 0.90 --out parva_filtered_maxMissing_90 --recode --recode-INFO-all
-
-#vcftools --vcf taiga --max-missing 0.90 --out taiga_filtered_maxMissing_90 --recode --recode-INFO-all
+vcftools --vcf parva_n00001_maxDepth.vcf --max-missing 0.90 --out parva_maxDepth_maxMissingSite --recode --recode-INFO-all
 

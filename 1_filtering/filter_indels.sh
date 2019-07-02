@@ -9,5 +9,5 @@
 
 module load bioinfo-tools vcftools/0.1.15
 
-vcftools --vcf parva_n00001_filtered_maxMissing_90.recode.vcf --max-alleles 2 --out parva_n00001_maxdepth_maxmissing_biallelic --recode --recode-INFO-all
+vcftools --vcf ../2_missing_remove_sites/parva_n00001_maxDepth_maxMissingSite.recode.vcf --max-alleles 2 --out parva_n00001_maxDepth_maxMissingSite_keepBiallelic --recode --recode-INFO-all
 
