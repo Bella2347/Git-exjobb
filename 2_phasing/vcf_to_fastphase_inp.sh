@@ -9,5 +9,5 @@
 
 module load bioinfo-tools plink/1.90b4.9
 
-plink --vcf ../../1_filtering/3_indels_remove/parva_n00001_maxDepth_maxMissingSite_keepBiallelic.recode.vcf --out parva_n00001 --recode fastphase --allow-extra-chr
+plink --vcf ../../1_filtering/2_missing_remove_site/parva_chrContigs_keepBiallelic_maxDepth_maxMissingSite.recode.vcf --out parva --recode fastphase --allow-extra-chr
 
