@@ -11,5 +11,5 @@ module load bioinfo-tools LDhelmet/1.10
 
 ldhelmet rjmcmc -o parva_N00042 --pos_file 1_input_format/pos_files/parva_N00042.pos \
 --snps_file 1_input_format/seq_files/parva_N00042_LDhelmetInp.seq \
--n 2000000 --burn_in 200000 -b 10 -m 1_input_format/mut_mat.txt --num_threds 5 -w 50
+-n 2000000 --burn_in 200000 -b 10 -m 1_input_format/mut_mat.txt --num_threads 5 -w 50
 
