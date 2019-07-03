@@ -8,7 +8,7 @@ import time
 
 if not len(sys.argv)==4:
 	print("\nError:\tincorrect number of command-line arguments")
-	print("Syntax:\tind_depth_filtering.py [Input VCF] [Contig List] [Output VCF]\n")
+	print("Syntax:\tchr_mapping_contigs.py [Input VCF] [Contig List] [Output VCF]\n")
 	sys.exit()
 
 if sys.argv[1]==sys.argv[3]:
