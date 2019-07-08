@@ -7,7 +7,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user bsm.sinclair@gmail.com
 
-module load bioinfo-tools fastPHASE/1.4.8
+module load bioinfo-tools fastPHASE/1.4.0
 
-fastPHASE -oparva_N00012_phased -C50 -KL5 -KU15 -KI5 1_input_format/parva.chr-N00042.recode.phase.inp
+fastPHASE -oparva_N00012_phased_140 -C50 -KL5 -KU15 -KI5 1_input_format/parva.chr-N00042.recode.phase.inp
 
