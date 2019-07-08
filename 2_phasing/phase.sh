@@ -9,5 +9,5 @@
 
 module load bioinfo-tools fastPHASE/1.4.0
 
-fastPHASE -oparva_N00012_phased_140 -C50 -KL5 -KU15 -KI5 1_input_format/parva.chr-N00042.recode.phase.inp
+fastPHASE -oparva_N00049_phased_140 -C50 -KL5 -KU25 -KI5 ../1_input_format/parva.chr-N00049.recode.phase.inp
 
