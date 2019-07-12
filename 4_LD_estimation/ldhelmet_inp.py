@@ -23,14 +23,15 @@ t_start = time.time()
 print('Converting fastPHASE output to LDhelmet input...')
 
 for line in fastphase_file:
-	if line.startswith('# ID'):
-		sample_id = re.findall('#\sID\s(\d+)', line)
-		out_file.write('>sample_' + sample_id[0] + '\n')
-		print_line = 1
-	elif print_line == 1:
-		bases = line.strip('\n').split(' ')
-		sequence = ''.join(bases)
-		out_file.write(sequence + '\n')
+	if not line.startswith('END GENOTYPES'):
+		if line.startswith('# ID'):
+			sample_id = re.findall('#\sID\s(\d+)', line)
+			out_file.write('>sample_' + sample_id[0] + '\n')
+			print_line = 1
+		elif print_line == 1:
+			bases = line.strip('\n').split(' ')
+			sequence = ''.join(bases)
+			out_file.write(sequence + '\n')
 
 fastphase_file.close()
 out_file.close()
