@@ -2,8 +2,8 @@
 #SBATCH -A p2018002
 #SBATCH -p core
 #SBATCH -n 5
-#SBATCH -t 2:00:00
-#SBATCH -J phasing_test2&3
+#SBATCH -t 1:00:00
+#SBATCH -J phasing_test4
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user bsm.sinclair@gmail.com
 
@@ -17,9 +17,9 @@ module load bioinfo-tools fastPHASE/1.4.0
 
 #fastPHASE -oparva_N00200_1phased -T50 -C30 -K6 -u../../0_data/parva_subpopulations.txt ../1_input_format/parva.chr-N00200.noP.inp
 
-fastPHASE -oparva_N00070_2phased -T50 -C25 -K6 -u../0_data/parva_subpopulations.txt 1_input_format/parva.chr-N00070.noP.inp
+#fastPHASE -oparva_N00070_2phased -T50 -C25 -K6 -u../0_data/parva_subpopulations.txt 1_input_format/parva.chr-N00070.noP.inp
 
-fastPHASE -oparva_N00070_3phased -T20 -C25 -K6 -u../0_data/parva_subpopulations.txt 1_input_format/parva.chr-N00070.noP.inp
+fastPHASE -oparva_N00070_4phased -T50 -C30 -K6 -u../0_data/parva_subpopulations.txt 1_input_format/parva.chr-N00070.noP.inp
 
 #fastPHASE -oparva_N00020_1phased -T50 -C30 -K6 -u../../0_data/parva_subpopulations.txt ../1_input_format/parva.chr-N00020.noP.inp
 
