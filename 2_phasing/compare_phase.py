@@ -15,9 +15,9 @@ with open(sys.argv[1], 'r') as file1, open(sys.argv[2], 'r') as file2:
 				print("not same length!")
 			for i in range(0,len(bases1)):
 				if bases1[i] == bases2[i]:
-					out_file.write('1')
+					out_file.write('1 ')
 				else:
-					out_file.write('0')
+					out_file.write('0 ')
 			out_file.write('\n')
 out_file.close()
 
