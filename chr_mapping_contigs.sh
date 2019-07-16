@@ -7,5 +7,5 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user bsm.sinclair@gmail.com
 
-python3 ../../Git-exjobb/chr_mapping_contigs.py ../parva.vcf ../contigs_lists/chr_mapping_contigs.txt parva_chrContigs.vcf
+python3 ../../Git-exjobb/chr_mapping_contigs.py ../taiga.vcf ../contigs_lists/chr10.txt taiga_chr10Contigs.vcf
 
