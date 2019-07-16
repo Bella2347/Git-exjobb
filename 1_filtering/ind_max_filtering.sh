@@ -7,6 +7,6 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user bsm.sinclair@gmail.com
 
-python3 ../../Git-exjobb/1_filtering/ind_depth_filtering.py ../3_indels_remove/parva_chrContigs_keepBiallelic.recode.vcf parva_depth.txt parva_chrContigs_keepBiallelic_maxDepth.vcf
+python3 ../../Git-exjobb/1_filtering/ind_depth_filtering.py ../3_indels_remove/taiga_chr10_keepBiallelic.recode.vcf taiga_depth.txt taiga_chr10_keepBiallelic_maxDepth.vcf
 
 

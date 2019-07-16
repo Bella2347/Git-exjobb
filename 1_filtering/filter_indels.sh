@@ -9,5 +9,5 @@
 
 module load bioinfo-tools vcftools/0.1.15
 
-vcftools --vcf ../../0_data/subset_vcf/parva_chrContigs.vcf --max-alleles 2 --out parva_keepBiallelic --recode --recode-INFO-all
+vcftools --vcf ../../0_data/subset_vcf/taiga_chr10contigs.vcf --max-alleles 2 --out taiga_chr10_keepBiallelic --recode --recode-INFO-all
 

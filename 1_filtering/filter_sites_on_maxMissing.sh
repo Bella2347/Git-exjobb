@@ -9,5 +9,5 @@
 
 module load bioinfo-tools vcftools/0.1.15
 
-vcftools --vcf ../1_depth_filter/parva_chrContigs_keepBiallelic_maxDepth.vcf --max-missing 0.90 --out parva_chrContigs_keepBiallelic_maxDepth_maxMissingSite --recode --recode-INFO-all
+vcftools --vcf ../1_depth_filter/taiga_chr10_keepBiallelic_maxDepth.vcf --max-missing 0.90 --out taiga_chr10_keepBiallelic_maxDepth_maxMissingSite --recode --recode-INFO-all
 
