@@ -2,17 +2,24 @@
 #SBATCH -A p2018002
 #SBATCH -p core
 #SBATCH -n 5
-#SBATCH -t 10:00:00
+#SBATCH -t 20:00:00
 #SBATCH -J ldhelmet
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user bsm.sinclair@gmail.com
 
 module load bioinfo-tools LDhelmet/1.10
 
-ldhelmet find_confs --num_threads 5 -w 50 -o parva_N70_N400.conf ../2_phasing/parva_N00070_1ldhelmet.inp.seq ../2_phasing/parva_N00400_ldhelmet.inp.seq
+# Configuration table
+# ldhelmet find_confs --num_threads 5 -w 50 -o parva_N70_N400.conf ../2_phasing/parva_N00070_1ldhelmet.inp.seq ../2_phasing/parva_N00400_ldhelmet.inp.seq
+
+# Likelihood lookup table
+# ldhelmet table_gen --num_threads 5 -c parva_N70_N400.conf -t 0.01 -r 0.0 0.1 10.0 1.0 100.0 -o parva_N70_N400.lk
+
+# Algorithm
+ldhelmet rjmcmc --num_threads 5 -w 50 -l 1_input_format/parva_N70_N400.lk -b 10 --snps_file 1_input_format/seq_files/parva_N00400_ldhelmet.inp.seq --pos_file 1_input_format/pos_files/parva.chr-N00400.pos -m 1_input_format/mut_mat.txt --burn_in 100000 -n 1000000 -o parva_N00400.post
+
+# Extract info
+ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.0975 -o parva_N00400_out.txt parva_N00400.post
 
 
-# ldhelmet rjmcmc -o parva_N00042 --pos_file 1_input_format/pos_files/parva_N00042.pos \
-#--snps_file 1_input_format/seq_files/parva_N00042_LDhelmetInp.seq \
-#-n 2000000 --burn_in 200000 -b 10 -m 1_input_format/mut_mat.txt --num_threads 5 -w 50
 
