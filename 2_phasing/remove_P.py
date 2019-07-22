@@ -11,8 +11,8 @@ pos_out = open(out_name[0]+'.pos', 'w+')
 
 for line in in_file:
 	if line.startswith('P'):
-		pos = line.split(' ')
-		pos = pos[1:]
+		pos = line.strip('\n').split(' ')
+		pos = pos[1:]	# Remove the P in the begining
 		pos = '\n'.join(pos)
 		pos_out.write(pos)
 	else:
