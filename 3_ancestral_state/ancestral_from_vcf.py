@@ -1,5 +1,6 @@
 # Scrip to extract the ancestral state from a vcf file containing individuals from three groups
 # Input is a vcf-file and a group-file which specify which group the individuals belong to, the individuals are assumed to appear in the same order as in the vcf
+# Indexing from zero
 
 import sys
 import re
@@ -104,7 +105,7 @@ for line in vcf:
 			state = '?'
 		
 
-		chr_pos = columns[0] + '\t' + columns[1] + '\t'
+		chr_pos = columns[0] + '\t' + str(int(columns[1])-1) + '\t' # Subtracts 1 from the position to index from zero
 		out.write(chr_pos + state + '\n')
 
 vcf.close()
