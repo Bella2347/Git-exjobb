@@ -9,7 +9,7 @@
 
 module load bioinfo-tools snpEff/4.3t
 
-snpEff FicAlb_1.4.86 ../1_scaff_names/parva_chrContigs_keepBiallelic_maxDepth_maxMissingSite.FicAlb1.4.vcf > parva_chrContigs_snpeff.vcf
+snpEff FicAlb_1.4.86 ../1_scaff_names/parva_chrContigs_keepBiallelic_maxDepth_maxMissingSite.NCBIv1.vcf > parva_chrContigs_snpeff.vcf
 
 
 
