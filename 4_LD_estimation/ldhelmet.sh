@@ -1,9 +1,9 @@
 #!/bin/bash -l
 #SBATCH -A p2018002
 #SBATCH -p core
-#SBATCH -n 8
+#SBATCH -n 10
 #SBATCH -t 20:00:00
-#SBATCH -J ldhelmet
+#SBATCH -J ldhelmet3
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user bsm.sinclair@gmail.com
 
@@ -16,14 +16,14 @@ module load bioinfo-tools LDhelmet/1.10
 #ldhelmet table_gen --num_threads 5 -c 1_input_format/parva_N70_N400.conf -t 0.01 -r 0.0 0.1 10.0 1.0 100.0 -o 1_input_format/parva_N70_N400.lk
 
 # Algorithm
-ldhelmet rjmcmc --num_threads 8 -w 50 -l 1_input_format/parva_N70_N400.lk -b 10 --snps_file 1_input_format/seq_files/parva_N00400_1phased_hapguess_switch.out.ld.seq --pos_file 1_input_format/pos_files/parva.chr-N00400.pos -m 1_input_format/mut_mat.txt --burn_in 100000 -n 1000000 -o parva_N00400.post
+ldhelmet rjmcmc --num_threads 10 -w 50 -l 1_input_format/parva_N70_N400.lk -b 10 --snps_file 1_input_format/seq_files/parva_N00400_1phased_hapguess_switch.out.ld.seq --pos_file 1_input_format/pos_files/parva.chr-N00400.pos -m 1_input_format/mut_mat.txt --burn_in 200000 -n 2000000 -o parva_N00400_3.post
 
-ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.0975 -o parva_N00400_out.txt parva_N00400.post
+ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.0975 -o parva_N00400_3out.txt parva_N00400_3.post
 
 
-ldhelmet rjmcmc --num_threads 8 -w 50 -l 1_input_format/parva_N70_N400.lk -b 10 --snps_file 1_input_format/seq_files/parva_N00070_1phased_hapguess_switch.out.ld.seq --pos_file 1_input_format/pos_files/parva.chr-N00070.pos -m 1_input_format/mut_mat.txt --burn_in 100000 -n 1000000 -o parva_N00070.post
+ldhelmet rjmcmc --num_threads 10 -w 50 -l 1_input_format/parva_N70_N400.lk -b 10 --snps_file 1_input_format/seq_files/parva_N00070_1phased_hapguess_switch.out.ld.seq --pos_file 1_input_format/pos_files/parva.chr-N00070.pos -m 1_input_format/mut_mat.txt --burn_in 200000 -n 2000000 -o parva_N00070_3.post
 
-ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.0975 -o parva_N00070_out.txt parva_N00070.post
+ldhelmet post_to_text -m -p 0.025 -p 0.50 -p 0.0975 -o parva_N00070_3out.txt parva_N00070_3.post
 
 
 
