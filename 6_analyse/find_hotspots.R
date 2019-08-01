@@ -38,7 +38,13 @@ for (i in 1:dim(N70_rec)[1]) {
 }
 
 
-# Sort out hotspots at least 750 bp from start to end
+# Sort out hotspots at least 750 bp from start to end and the SNP density > 1 SNP/1kb
+N70_snps_all_bases <- numeric(4386343)
+
+for (i in 1:(dim(N70_snp_pos)[1]-1)) {
+  N70_snps_all_bases[N70_snp_pos[i,]] <- 1
+}
+
 # Dataframe for the total length of hotspots
 hotspots_pos <- data.frame(array(NA, c(24,4)))
 hp_i <- 1
@@ -50,8 +56,8 @@ while (i <= (dim(hotspots)[1]-1)) {
   while (hotspots[(i+n),2] == hotspots[(i+n+1),1]) {
     n <- n + 1
   }
-
-  if ((hotspots[(i+n),2] - hotspots[i,1]) >= 750) {
+  hot_length <- (hotspots[(i+n),2] - hotspots[i,1])
+  if (hot_length >= 750 && ((sum(N70_snps_all_bases[hotspots[i,1]:hotspots[(i+n),2]])/hot_length)*1000) >= 1) {
     hotspots_pos[hp_i,] <- c(hotspots[i,1], hotspots[(i+n),2], 1, (hotspots[(i+n),2] - hotspots[i,1]))
     hp_i <- hp_i + 1
   }
