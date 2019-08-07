@@ -1,3 +1,4 @@
+# Test Git
 # Compute the average recombination rate in 2kb windows with 1kb stepsize
 # Parameters to change
 stepSize <- 1000
