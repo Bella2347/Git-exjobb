@@ -4,9 +4,6 @@
 
 ############################ Input parameters ###########################
 
-# recFirst_i           from meanRecombinationRateInWindows.R
-# recLast_i            from meanRecombinationRateInWindows.R
-# windowSize           from meanRecombinationRateInWindows.R
 # concatenatedHotspots from hotspotsFromWindows.R
 winSizeForRecRateSurr <- 20000  # The size of the window when comparring surroundings of hotspots
 
