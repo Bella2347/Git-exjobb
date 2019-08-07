@@ -37,5 +37,5 @@ meanRecRateSurrHotspots <- rowMeans(recRateSurrHotspots)
 
 plot(c(-winSizeForRecRateSurr:winSizeForRecRateSurr), meanRecRateSurrHotspots, type="s", 
      xlab="Distance form hotspot center [bp]", ylab="Recombination rate relative to the mean",
-     main="Relative recombination rate at hotspots, scaffold N70")
+     main="Relative recombination rate at hotspots, scaffold N70", ylim=c(0,27))
 
