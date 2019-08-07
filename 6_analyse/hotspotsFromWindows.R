@@ -78,7 +78,7 @@ while (i < dim(hotspots)[1]) {
   while ((hotspots[(i+n),1]+1000) == hotspots[(i+n+1),1] && (i+n) < dim(hotspots)[1]) {
     n <- n + 1
   }
-  hotspotLength <- (hotspots[(i+n),2] - hotspots[i,1])
+  hotspotLength <- (hotspots[(i+n),2] - hotspots[i,1]+1)
   
   concatenatedHotspots[h_i,] <- c(hotspots[i,1], hotspots[(i+n),2], hotspotLength, mean(hotspots[i:(i+n),3]))
   h_i <- h_i + 1
