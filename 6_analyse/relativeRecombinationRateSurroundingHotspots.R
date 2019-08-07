@@ -4,14 +4,21 @@
 
 ############################ Input parameters ###########################
 
-recFirst_i
-recLast_i
-windowSize
+# recFirst_i           from meanRecombinationRateInWindows.R
+# recLast_i            from meanRecombinationRateInWindows.R
+# windowSize           from meanRecombinationRateInWindows.R
+# concatenatedHotspots from hotspotsFromWindows.R
 winSizeForRecRateSurr <- 20000  # The size of the window when comparring surroundings of hotspots
 
 ########################### Output parameters ###########################
+# recRateSurrHotspots:     The relative recombination rate surrounding each hotspot
+# meanRecRateSurrHotspots: The mean relative recombination rate over all hotspots
 ############################ Other parameters ###########################
-
+# hotspotMiddle:   The middle of the hotspot
+# i
+# startSurr_i:     The start of the surrounding
+# endSurr_i:       The end of the surrounding
+# meanRecRateSurr: The mean recombination rate surrounding the i:th hotspot
 #########################################################################
 #########################################################################
 
@@ -33,5 +40,5 @@ meanRecRateSurrHotspots <- rowMeans(recRateSurrHotspots)
 
 plot(c(-winSizeForRecRateSurr:winSizeForRecRateSurr), meanRecRateSurrHotspots, type="s", 
      xlab="Distance form hotspot center [bp]", ylab="Recombination rate relative to the mean",
-     main="Recombination rate at hotspots, scaffold N70")
+     main="Relative recombination rate at hotspots, scaffold N70")
 
