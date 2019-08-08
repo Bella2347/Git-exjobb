@@ -16,6 +16,7 @@
 #########################################################################
 #########################################################################
 
+options(scipen=5)
 par(mfrow=c(1,1))
 par(mar=c(6,4,4,2))
 plot(meanRecRateWin[,1], meanRecRateWin[,3], type="s", ylim=c(0,3), xlab="Start position of window [bp]", 
@@ -25,4 +26,8 @@ plot(meanRecRateWin[,1], meanRecRateWin[,3], type="s", ylim=c(0,3), xlab="Start 
 for (i in 1:dim(concatenatedHotspots)[1]) {
   lines(concatenatedHotspots[i,1],concatenatedHotspots[i,4], type="p", col="red")
 }
+
+rug(concatenatedHotspots[,1], side = 1, col="red")
+
 legend("topleft", legend="Hotspots", col="red", pch=1)
+
