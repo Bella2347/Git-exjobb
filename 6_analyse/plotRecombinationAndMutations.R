@@ -1,8 +1,34 @@
-# Plot the recombination rate and the density of missense SNPs
+#########################################################################
+## Plot recombination rate in windows, hotspots and missense mutations ##
+#########################################################################
 
-par(mar = c(5,5,2,5));
-plot(N70_rec[,1],N70_rec[,3], type="s", ylab="Recombination rate [1/bp]", xlim=c(0,4386342), main="Recombination rate and missense SNP density", xlab="Position [bp]");
-par(new=T);
-plot(density(N70_missense_pos), axes=F, ylab=NA, xlab=NA, main=NA, col="red");axis(side=4);mtext(side=4, line=3, "Missense SNP density");
-legend("topright", legend=c("Recombination rate", "Missense SNP density"), lty=c(1,1), col=c("black","red"))
+############################ Input parameters ###########################
+
+missensePos <- read.table("parva_missense_pos_N00070.txt",header=FALSE)
+# meanRecRateWin       from meanRecombinationRateInWindows.R
+# stepSize             from meanRecombinationRateInWindows.R
+# windowSize           from meanRecombinationRateInWindows.R
+# flankingWinSize      from meanRecombinationRateInWindows.R
+# concatenatedHotspots from hotspotsFromWindows.R
+
+########################### Output parameters ###########################
+############################ Other parameters ###########################
+# i
+#########################################################################
+#########################################################################
+
+options(scipen=5)
+par(mfrow=c(1,1))
+par(mar=c(6,4,4,2))
+plot(meanRecRateWin[,1], meanRecRateWin[,3], type="s", ylim=c(0,3), xlab="Start position of window [bp]", 
+     ylab="Recombination rate [1/bp]", main="Average recombination in overlapping windows, Scaffold N70", 
+     sub=paste("step size:", stepSize, "bp, window size:", windowSize, "bp, flanking window:", flankingWinSize, "bp"))
+
+for (i in 1:dim(concatenatedHotspots)[1]) {
+  lines(concatenatedHotspots[i,1],concatenatedHotspots[i,4], type="p", col="red")
+}
+
+rug(missensePos[,1], side = 1, col="blue")
+
+legend("topleft", legend=c("Hotspots","Missense mutations"), col=c("red","blue"), pch=c(1,124))
 
