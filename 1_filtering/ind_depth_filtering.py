@@ -61,12 +61,13 @@ for line in vcf:
 			print("Error:\tNumber of samples in VCF does not match number of samples in depth-file\n")
 			sys.exit()
 
-		depths = []
-		# If the only information is the GT the row is skiped, meaning that SNP is removed
+		# Mask only if DP information is aviable
 		if len(re.findall(':', columns[8])) > 0:
-			# The DP information is in the 3rd field (2nd when index start at 0)
+
+			dp_index = columns[8].split(':').index('DP')
+			depths = []
 			for i in range(9,len(columns)):
-				depths.append(columns[i].split(':')[2])
+				depths.append(columns[i].split(':')[dp_index])
 
 			for i in range(len(filter_depth_list)):
 				if isfloat(depths[i]):
@@ -76,6 +77,10 @@ for line in vcf:
 			masked_line = '\t'.join(columns)
 
 			out.write(masked_line+"\n")
+		else:
+			# If the line does not contain any DP information, write it as it is and give the position
+			out.write(line)
+			print("No DP information at: " + columns[0] + ", " + columns[1])
 
 vcf.close()
 out.close()
