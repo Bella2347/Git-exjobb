@@ -63,17 +63,18 @@ for line in vcf:
 
 		depths = []
 		# The DP information is in the 3rd field (2nd when index start at 0)
-		for i in range(9,len(columns)):
-			depths.append(columns[i].split(':')[2])
+		if len(re.findall(':', columns[8])) > 0:
+			for i in range(9,len(columns)):
+				depths.append(columns[i].split(':')[2])
 
-		for i in range(len(filter_depth_list)):
-			if isfloat(depths[i]):
-				if float(depths[i]) > times_avg_depth*filter_depth_list[i]:
-					columns[i+9] = re.sub('\d/\d:','./.:', columns[i+9])
+			for i in range(len(filter_depth_list)):
+				if isfloat(depths[i]):
+					if float(depths[i]) > times_avg_depth*filter_depth_list[i]:
+						columns[i+9] = re.sub('\d/\d:','./.:', columns[i+9])
 
-		masked_line = '\t'.join(columns)
+			masked_line = '\t'.join(columns)
 
-		out.write(masked_line+"\n")
+			out.write(masked_line+"\n")
 
 vcf.close()
 out.close()
