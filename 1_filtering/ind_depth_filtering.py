@@ -62,8 +62,9 @@ for line in vcf:
 			sys.exit()
 
 		depths = []
-		# The DP information is in the 3rd field (2nd when index start at 0)
+		# If the only information is the GT the row is skiped, meaning that SNP is removed
 		if len(re.findall(':', columns[8])) > 0:
+			# The DP information is in the 3rd field (2nd when index start at 0)
 			for i in range(9,len(columns)):
 				depths.append(columns[i].split(':')[2])
 
