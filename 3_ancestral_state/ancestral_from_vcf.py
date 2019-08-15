@@ -76,14 +76,15 @@ for line in vcf:
 
 		# Check all genotypes in each group, if all are the same, save the genotype
 		monomorphic = []
-		if not any(element != group1_genotypes[0] for element in group1_genotypes):
-			monomorphic.append(group1_genotypes[0])
-		
-		if not any(element != group2_genotypes[0] for element in group2_genotypes):
-			monomorphic.append(group2_genotypes[0])
-
-		if not any(element != group3_genotypes[0] for element in group3_genotypes):
-			monomorphic.append(group3_genotypes[0])
+		if len(group1_genotypes) > 0:
+			if not any(element != group1_genotypes[0] for element in group1_genotypes):
+				monomorphic.append(group1_genotypes[0])
+		if len(group2_genotypes) > 0:
+			if not any(element != group2_genotypes[0] for element in group2_genotypes):
+				monomorphic.append(group2_genotypes[0])
+		if len(group3_genotypes) > 0:
+			if not any(element != group3_genotypes[0] for element in group3_genotypes):
+				monomorphic.append(group3_genotypes[0])
 
 		# If at least two groups are monomorphic check if at least two are monomorphic for the same variant
 		# If they are monomorphic for the same, print that allele, if not print a ?
