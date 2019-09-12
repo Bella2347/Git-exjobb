@@ -1,19 +1,24 @@
 #########################################################################
-####################### Read in recombination rate ######################
+# Script that calculates the average recombination rate in 2kb          #
+# overlapping (1kb) windows and that identifies hotspots as regions     #
+# with a recombinaiton rate 10 times higher than the background.        #
 #########################################################################
 
 ############################ Input parameters ###########################
 
 args <- commandArgs(trailingOnly = TRUE)
-recFilename <- args[1]
+recFilename <- args[1]    # Read in recombination rate-file
+stepSize <- 1000          # The length of the steps
+windowSize <- 2000        # The length of the window
+recTimes <- 10            # The threshold for the recombination rate in hotspots
+limitSnpDensity <- 1      # The minimum SNP density in hotspot regions
+flankingWinSize <- 100000 # The length of the flanking region
+outFilename <- args[2]    # File to write output to
 
-########################### Output parameters ###########################
-# recRate:        The recombination for SNP pairs
-# recRatePerBase: The recombination for each base
-# snpPerBase:     Binary array, if the base is (1) a SNP or not (0)
-############################ Other parameters ###########################
-# i
 #########################################################################
+
+#########################################################################
+####################### Read in recombination rate ######################
 #########################################################################
 
 # Read in the recombination rate
@@ -46,25 +51,11 @@ snpPerBase[recRate[dim(recRate)[1],2]] <- 1
 ###### Average recombination rate in windows with overlapping steps #####
 #########################################################################
 
-############################ Input parameters ###########################
-
-#recRatePerBase from loadScaffold.R
-stepSize <- 1000          # The length of the steps
-windowSize <- 2000        # The length of the window
-
-########################### Output parameters ###########################
-# meanRecRateWin: the mean recombination rate per window
-############################ Other parameters ###########################
-
-#########################################################################
-#########################################################################
-
 recNonNAindex <- which(!is.na(recRatePerBase))
 recFirst_i <- min(recNonNAindex)
 
 # Create a data frame to store the average recombination rate in
 meanRecRateWin <- data.frame(array(NA, c(((dim(recRatePerBase)-recFirst_i)/stepSize),3)))
-colnames(meanRecRateWin) <- c("Start position", "End position", "Recombination rate [1/bp]")
 
 # Use this to know the next empty row
 r_i <- 1
@@ -83,30 +74,6 @@ meanRecRateWin <- meanRecRateWin[1:(r_i-1),]
 
 #########################################################################
 ############################# Find hotspots #############################
-#########################################################################
-
-############################ Input parameters ###########################
-
-#snpPerBase     from loadScaffold.R
-# windowSize      from meanRecombinationRateInWindows.R
-# meanRecRateWin  from meanRecombinationRateInWindows.R
-recTimes <- 10       # The threshold for the recombination rate in hotspots
-limitSnpDensity <- 1 # The minimum SNP density in hotspot regions
-flankingWinSize <- 100000 # The length of the flanking region
-
-########################### Output parameters ###########################
-# hotspots:             list with all windows that fulfill the hotspot condition
-# concatenatedHotspots: adjecent hotspots joined to one
-############################ Other parameters ###########################
-# nrWinPerFlankingWin:    how many windows that covers the flanking region
-# h_i
-# flankingWindows:        index of all flanking window which will be averaged
-# snpDensity:             density of SNPs in the region
-# meanRecRateFlankingWin: the mean recombination rate in the flanking region
-# hotspotLength:          the length of the hotspot when concatenated
-# i
-# n
-#########################################################################
 #########################################################################
 
 # Calculate how many windows fit in the flanking regions
@@ -154,6 +121,7 @@ hotspots <- hotspots[1:(h_i-1),]
 
 # Concatenate adjecent hotspots
 concatenatedHotspots <- data.frame(array(NA, c(dim(hotspots)[1],4)))
+colnames(concatenatedHotspots) <- c("Start position", "End position", "Length of hotspot", "Recombination rate [1/bp]")
 h_i <- 1
 
 i <- 1
@@ -173,4 +141,4 @@ while (i < dim(hotspots)[1]) {
 # Remove empty rows
 concatenatedHotspots <- concatenatedHotspots[1:(h_i-1),]
 
-
+write.table(concatenatedHotspots, outFilename, append = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
