@@ -4,8 +4,8 @@
 
 ############################ Input parameters ###########################
 
-recFilename <- "parva_N00070_out.txt"
-lengthOfScaffold <- 4386343
+args <- commandArgs(trailingOnly = TRUE)
+recFilename <- args[1]
 
 ########################### Output parameters ###########################
 # recRate:        The recombination for SNP pairs
@@ -18,22 +18,20 @@ lengthOfScaffold <- 4386343
 
 # Read in the recombination rate
 recRate <- read.table(recFilename, sep=" ", skip=2, header=FALSE)
-colnames(recRate) <- c("left_snp", "right_snp", "mean", "p0.025", "p0.500", "p0.098")
+#colnames(recRate) <- c("left_snp", "right_snp", "mean", "p0.025", "p0.500", "p0.098")
 
 # The file is indexed from 0, add one to each position to change the indexing to 1
 recRate[,1:2] <- recRate[,1:2]+1
 
-# Create an array with the length of the scaffold to store the recombination rate per base
-recRatePerBase <- array(NA, lengthOfScaffold)
+recRatePerBase <- array(NA, recRate[dim(recRate)[1],2])
 
 # For each base write the recombination rate
-for (i in 1:(dim(recRate)[1]-1)) {
+for (i in 1:dim(recRate)[1]) {
   recRatePerBase[recRate[i,1]:recRate[i,2]] <- recRate[i,3]
 }
 
-
 # Create an array with the length of the scaffold to store if the base is (1) a SNP or not (0)
-snpPerBase <- numeric(lengthOfScaffold)
+snpPerBase <- numeric(recRate[dim(recRate)[1],2])
 
 # For each base write the recombination rate
 for (i in 1:(dim(recRate)[1])) {
@@ -51,48 +49,37 @@ snpPerBase[recRate[dim(recRate)[1],2]] <- 1
 ############################ Input parameters ###########################
 
 #recRatePerBase from loadScaffold.R
-#snpPerBase     from loadScaffold.R
 stepSize <- 1000          # The length of the steps
 windowSize <- 2000        # The length of the window
-flankingWinSize <- 100000 # The length of the flanking region
 
 ########################### Output parameters ###########################
 # meanRecRateWin: the mean recombination rate per window
 ############################ Other parameters ###########################
-# recNonNAindex: get the index of all bases that have an estimated recombination rate
-# recFirst_i:    the first base with an estimated recombination rate
-# recLast_i:     the last base with an estimated recombination rate
-# r_i
-# i
+
 #########################################################################
 #########################################################################
 
-# Find the first and last SNP with a recombination rate
 recNonNAindex <- which(!is.na(recRatePerBase))
 recFirst_i <- min(recNonNAindex)
-recLast_i <- max(recNonNAindex)
 
 # Create a data frame to store the average recombination rate in
-meanRecRateWin <- data.frame(array(NA, c(((recLast_i-recFirst_i)/stepSize),3)))
+meanRecRateWin <- data.frame(array(NA, c(((dim(recRatePerBase)-recFirst_i)/stepSize),3)))
 colnames(meanRecRateWin) <- c("Start position", "End position", "Recombination rate [1/bp]")
+
 # Use this to know the next empty row
 r_i <- 1
-
 # Calculate the mean recombination rate for each window
-for (i in seq(recFirst_i,recLast_i,stepSize)) {
+for (i in seq(recFirst_i,dim(recRatePerBase),stepSize)) {
   
-  # If the window extends over the take the mean to the end even if it is less than the window size
-  if ((recLast_i-i) < (windowSize-1) && (recLast_i-i) > (stepSize-1)) {
-    # Take the mean of the window and store it with the positions for the window
-    meanRecRateWin[r_i,] <- c(i, recLast_i, mean(recRatePerBase[i:recLast_i]))
-  
-  } else if ((recLast_i-i) > (windowSize-1) && (recLast_i-i) > (stepSize-1)) {
-    meanRecRateWin[r_i,] <- c(i, (windowSize-1+i), mean(recRatePerBase[i:(windowSize-1+i)]))
+  if ((dim(recRatePerBase)-i) >= (windowSize)) {
+    meanRecRateWin[r_i,] <- c(i, (i+windowSize-1), mean(recRatePerBase[i:(i+windowSize-1)]))
+    
+    # Add one to keep track of the next empty row
+    r_i <- r_i +1
   } 
-  
-  # Add one to keep track of the next empty row
-  r_i <- r_i +1
 }
+
+meanRecRateWin <- meanRecRateWin[1:(r_i-1),]
 
 #########################################################################
 ############################# Find hotspots #############################
@@ -100,11 +87,12 @@ for (i in seq(recFirst_i,recLast_i,stepSize)) {
 
 ############################ Input parameters ###########################
 
-# flankingWinSize from meanRecombinationRateInWindows.R
+#snpPerBase     from loadScaffold.R
 # windowSize      from meanRecombinationRateInWindows.R
 # meanRecRateWin  from meanRecombinationRateInWindows.R
 recTimes <- 10       # The threshold for the recombination rate in hotspots
 limitSnpDensity <- 1 # The minimum SNP density in hotspot regions
+flankingWinSize <- 100000 # The length of the flanking region
 
 ########################### Output parameters ###########################
 # hotspots:             list with all windows that fulfill the hotspot condition
@@ -126,7 +114,7 @@ nrWinPerFlankingWin <- 2*flankingWinSize/windowSize
 
 # Create array to store the hotspots
 hotspots <- data.frame(array(NA, c(dim(meanRecRateWin)[1],3)))
-colnames(hotspots) <- c("Start position", "End position", "Recombination rate [1/bp]")
+colnames(hotspots) <- c("Start position", "End position", "Mean recombination rate [1/bp]")
 # Keep track of the next empty row
 h_i <- 1
 
