@@ -4,12 +4,15 @@ recFilename <- args[1]    # Read in recombination rate-file
 recTimes <- 10            # The threshold for the recombination rate in hotspots
 limitSnpDensity <- 1      # The minimum SNP density in hotspot regions
 flankingWinSize <- 100000 # The total length of the flanking region
-minHotspotsLen <- 750
+minHotspotsLen <- 750     # Minimum length of a hotspot
 outFilename <- args[2]    # File to write output to
 
-########### Read in file ################
+
 # Read in the recombination rate
 recRate <- read.table(recFilename, sep=" ", skip=2, header=FALSE)
+
+# If the scaffold is to small, then no hotspots can be found
+stopifnot(recRate[dim(recRate)[1],2] > flankingWinSize*2)
 
 # The file is indexed from 0, add one to each position to change the indexing to 1
 recRate[,1:2] <- recRate[,1:2]+1
@@ -104,4 +107,6 @@ while (i < dim(potentialHotspots)[1]) {
 
 # Remove empty rows
 hotspots <- hotspots[1:(h_i-1),]
+
+write.table(hotspots, outFilename, append = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
 
