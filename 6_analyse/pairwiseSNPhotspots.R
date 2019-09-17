@@ -1,11 +1,72 @@
+################### Functions ###################
+find_start_end_window <- function(firstSNP, secondSNP, windowSize, scaffoldLength) {
+  # A function which finds the start and end positions of the background window
+  # If the window exceeds over the ends it is truncated
+  
+  windowMiddle <- as.integer((secondSNP - firstSNP)/2 + firstSNP)
+  
+  if ((windowMiddle - windowSize/2) < 1) {
+    windowStart <- 1
+  } else {
+    windowStart <- windowMiddle - windowSize/2
+  }
+  
+  if ((windowSize/2 + windowMiddle) > scaffoldLength) {
+    windowEnd <- scaffoldLength
+  } else {
+    windowEnd <- windowSize/2 + windowMiddle
+  }
+  
+  return(c(windowStart, windowEnd))
+}
+
+
+is_hotspot <- function(SNPpair, windowSize, timesRecombinationRate, 
+                       minSNPdensity, recombinationRateAllBases, SNParray) {
+  # A function which takes two SNPs and if the recombination rate between them is a certain
+  # times higher than the background they are returned as a hotspot
+  # If they are not a hotspot, nothing is returned
+  
+  # SNPpair contains: first SNP position, second SNP position, recombination rate between the SNPs
+  
+  windowStartEnd <- find_start_end_window(SNPpair[1], SNPpair[2], windowSize, dim(recombinationRateAllBases)[1])
+  
+  # windowMiddle <- as.integer((SNPpair[2] - SNPpair[1])/2 + SNPpair[1])
+  # 
+  # if ((windowMiddle - windowSize/2) < 1) {
+  #   windowStart <- 1
+  # } else {
+  #   windowStart <- windowMiddle - windowSize/2
+  # }
+  # 
+  # if ((windowSize/2 + windowMiddle) > scaffoldLength) {
+  #   windowEnd <- scaffoldLength
+  # } else {
+  #   windowEnd <- windowSize/2 + windowMiddle
+  # }
+  # 
+  # windowStartEnd <- c(windowStart, windowEnd)
+  
+  meanRecRateWin <- mean(recombinationRateAllBases[windowStartEnd[1]:windowStartEnd[2]], na.rm=TRUE)
+  snpDensity <- mean(SNParray[windowStartEnd[1]:windowStartEnd[2]])*1000
+  
+  if (SNPpair[3] >= meanRecRateWin*timesRecombinationRate && snpDensity >= minSNPdensity) {
+    return(c(as.integer(SNPpair[1]), as.integer(SNPpair[2]), as.numeric(SNPpair[3]), meanRecRateWin, snpDensity))
+  }
+  
+}
+
+############################################################
+
 ########### INPUT ###############
-args <- commandArgs(trailingOnly = TRUE)
-recFilename <- args[1]    # Read in recombination rate-file
+#args <- commandArgs(trailingOnly = TRUE)
+#recFilename <- args[1]    # Read in recombination rate-file
 recTimes <- 10            # The threshold for the recombination rate in hotspots
 limitSnpDensity <- 1      # The minimum SNP density in hotspot regions
 flankingWinSize <- 100000 # The total length of the flanking region
 minHotspotsLen <- 750     # Minimum length of a hotspot
-outFilename <- args[2]    # File to write output to
+#outFilename <- args[2]    # File to write output to
+
 
 
 # Read in the recombination rate
@@ -48,33 +109,17 @@ colnames(potentialHotspots) <- c("Start position", "End position", "Mean recombi
 # To know which row to write results to
 ph_i <- 1
 
+potentialHotspots <- apply(recRate, 1, is_hotspot, windowSize = flankingWinSize, timesRecombinationRate = recTimes, 
+                                      minSNPdensity = limitSnpDensity, recombinationRateAllBases = recRatePerBase,
+                                      SNParray = snpPerBase)
+
 # Step through each line in the recombination rate
 for (i in 1:dim(recRate)[1]) {
-
-  # Save the middle point between two SNPs
-  windowMiddle_i <- (recRate[i,2]-recRate[i,1])/2+recRate[i,1]
-  # Find the end and start of the flanking region
-  flankingWinStart_i <- windowMiddle_i-flankingWinSize/2
-  flankingWinEnd_i <- windowMiddle_i+flankingWinSize/2
-  
-  # If the start of the window is before the first recombination rate value just sum from the first value
-  if (flankingWinStart_i < recRate[1,1]) {
-    meanRecRateFlankingWin <- mean(recRatePerBase[recRate[1,1]:flankingWinEnd_i])
-    snpDensity <- mean(snpPerBase[recRate[1,1]:flankingWinEnd_i])*1000
-  
-  # If the end of the window exceds the last recombination rate value use the sum up to the end
-  } else if (flankingWinEnd_i > dim(recRatePerBase)[1]) {
-    meanRecRateFlankingWin <- mean(recRatePerBase[flankingWinStart_i:dim(recRatePerBase)[1]])
-    snpDensity <- mean(snpPerBase[flankingWinStart_i:dim(recRatePerBase)[1]])*1000
-  
-  } else {
-    meanRecRateFlankingWin <- mean(recRatePerBase[flankingWinStart_i:flankingWinEnd_i])
-    snpDensity <- mean(snpPerBase[flankingWinStart_i:flankingWinEnd_i])*1000
-  }
-  
-  # If the recombination rate between thoose SNPs is at least a certain times higher than the average save it as a potential hotspot
-  if (recRate[i,3] >= (meanRecRateFlankingWin*recTimes) && snpDensity >= limitSnpDensity) {
-    potentialHotspots[ph_i,] <- c(recRate[i,1:3], meanRecRateFlankingWin, snpDensity)
+  hotspotInfo <- is_hotspot(SNPpair = recRate[i,], windowSize = flankingWinSize, timesRecombinationRate = recTimes, 
+                                         minSNPdensity = limitSnpDensity, recombinationRateAllBases = recRatePerBase, 
+                                         SNParray = snpPerBase)
+  if (!is.null(hotspotInfo)) {
+    potentialHotspots[ph_i,]
     ph_i <- ph_i + 1
   }
 }
@@ -99,7 +144,7 @@ while (i < dim(potentialHotspots)[1]) {
   hotspotLength <- (potentialHotspots[(i+n),2] - potentialHotspots[i,1])
   
   if (hotspotLength >= minHotspotsLen) {
-    hotspots[h_i,] <- c(potentialHotspots[i,1], potentialHotspots[(i+n),2], (potentialHotspots[(i+n),2] - potentialHotspots[i,1]))
+    hotspots[h_i,] <- c(potentialHotspots[i,1], potentialHotspots[(i+n),2], hotspotLength)
     h_i <- h_i + 1
   }
   i <- i + n + 1
