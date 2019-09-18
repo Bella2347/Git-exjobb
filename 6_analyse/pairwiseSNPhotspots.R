@@ -1,3 +1,5 @@
+start_time <- Sys.time()
+
 ################### Functions ###################
 find_start_end_window <- function(firstSNP, secondSNP, windowSize, scaffoldLength) {
   # A function which finds the start and end positions of the background window
@@ -31,41 +33,32 @@ is_hotspot <- function(SNPpair, windowSize, timesRecombinationRate,
   
   windowStartEnd <- find_start_end_window(SNPpair[1], SNPpair[2], windowSize, dim(recombinationRateAllBases)[1])
   
-  # windowMiddle <- as.integer((SNPpair[2] - SNPpair[1])/2 + SNPpair[1])
-  # 
-  # if ((windowMiddle - windowSize/2) < 1) {
-  #   windowStart <- 1
-  # } else {
-  #   windowStart <- windowMiddle - windowSize/2
-  # }
-  # 
-  # if ((windowSize/2 + windowMiddle) > scaffoldLength) {
-  #   windowEnd <- scaffoldLength
-  # } else {
-  #   windowEnd <- windowSize/2 + windowMiddle
-  # }
-  # 
-  # windowStartEnd <- c(windowStart, windowEnd)
-  
   meanRecRateWin <- mean(recombinationRateAllBases[windowStartEnd[1]:windowStartEnd[2]], na.rm=TRUE)
   snpDensity <- mean(SNParray[windowStartEnd[1]:windowStartEnd[2]])*1000
   
   if (SNPpair[3] >= meanRecRateWin*timesRecombinationRate && snpDensity >= minSNPdensity) {
     return(c(as.integer(SNPpair[1]), as.integer(SNPpair[2]), as.numeric(SNPpair[3]), meanRecRateWin, snpDensity))
   }
-  
+}
+
+hotspots_overlap <- function(firstHotspot, secondHotspot) {
+  if (firstHotspot[2] == secondHotspot[1]) {
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
 }
 
 ############################################################
 
 ########### INPUT ###############
-#args <- commandArgs(trailingOnly = TRUE)
-#recFilename <- args[1]    # Read in recombination rate-file
+args <- commandArgs(trailingOnly = TRUE)
+recFilename <- args[1]    # Read in recombination rate-file
 recTimes <- 10            # The threshold for the recombination rate in hotspots
 limitSnpDensity <- 1      # The minimum SNP density in hotspot regions
 flankingWinSize <- 100000 # The total length of the flanking region
 minHotspotsLen <- 750     # Minimum length of a hotspot
-#outFilename <- args[2]    # File to write output to
+outFilename <- args[2]    # File to write output to
 
 
 
@@ -93,40 +86,17 @@ for (i in 1:dim(recRate)[1]) {
 snpPerBase <- numeric(recRate[dim(recRate)[1],2])
 
 # For each base set to 1 if it is a SNP
-for (i in 1:(dim(recRate)[1])) {
-  snpPerBase[recRate[i,1]] <- 1
-}
+snpPerBase[recRate[,1]] <- 1
 
 # The last SNP, since it is not in column 1
 snpPerBase[recRate[dim(recRate)[1],2]] <- 1
 
 
-
-# Initiate a dataframe to store the detected hotspots
-potentialHotspots <- data.frame(array(NA, c(dim(recRate)[1],5)))
-colnames(potentialHotspots) <- c("Start position", "End position", "Mean recombination rate [1/bp]", 
-                                 "Mean recombination rate in flanking region [1/bp]", "SNP density in flanking region [SNP/1kb]")
-# To know which row to write results to
-ph_i <- 1
-
 potentialHotspots <- apply(recRate, 1, is_hotspot, windowSize = flankingWinSize, timesRecombinationRate = recTimes, 
-                                      minSNPdensity = limitSnpDensity, recombinationRateAllBases = recRatePerBase,
-                                      SNParray = snpPerBase)
+                           minSNPdensity = limitSnpDensity, recombinationRateAllBases = recRatePerBase, SNParray = snpPerBase)
 
-# Step through each line in the recombination rate
-for (i in 1:dim(recRate)[1]) {
-  hotspotInfo <- is_hotspot(SNPpair = recRate[i,], windowSize = flankingWinSize, timesRecombinationRate = recTimes, 
-                                         minSNPdensity = limitSnpDensity, recombinationRateAllBases = recRatePerBase, 
-                                         SNParray = snpPerBase)
-  if (!is.null(hotspotInfo)) {
-    potentialHotspots[ph_i,]
-    ph_i <- ph_i + 1
-  }
-}
-
-# Remove empty rows
-potentialHotspots <- potentialHotspots[1:(ph_i-1),]
-
+potentialHotspots <- as.data.frame(matrix(unlist(potentialHotspots), ncol = 5, byrow = TRUE))
+colnames(potentialHotspots) <- c("Start SNP", "End SNP", "Rec. rate", "Mean rec. rate in surrounding", "SNP density in surrounding")
 
 
 # Dataframe for the total length of hotspots
@@ -136,18 +106,21 @@ h_i <- 1
 
 # Go through the potential hotspots, find if some hotspots overlap, count the number of overlapping hotspots and save the total length if it is more than 750 bp
 i <- 1
-while (i < dim(potentialHotspots)[1]) {
-  n <- 0
-  while (potentialHotspots[(i+n),2] == potentialHotspots[(i+n+1),1]) {
-    n <- n + 1
+while (i <= dim(potentialHotspots)[1]) {
+  n <- i
+  if (n != dim(potentialHotspots)[1]) {
+    while (hotspots_overlap(potentialHotspots[n,], potentialHotspots[(n+1),])) {
+      n <- n + 1
+    }
   }
-  hotspotLength <- (potentialHotspots[(i+n),2] - potentialHotspots[i,1])
+  
+  hotspotLength <- (potentialHotspots[n,2] - potentialHotspots[i,1])
   
   if (hotspotLength >= minHotspotsLen) {
-    hotspots[h_i,] <- c(potentialHotspots[i,1], potentialHotspots[(i+n),2], hotspotLength)
+    hotspots[h_i,] <- c(potentialHotspots[i,1], potentialHotspots[n,2], hotspotLength)
     h_i <- h_i + 1
   }
-  i <- i + n + 1
+  i <- n + 1
 }
 
 # Remove empty rows
@@ -155,3 +128,6 @@ hotspots <- hotspots[1:(h_i-1),]
 
 write.table(hotspots, outFilename, append = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
 
+end_time <- Sys.time()
+
+end_time - start_time
