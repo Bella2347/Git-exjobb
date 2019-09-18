@@ -42,7 +42,7 @@ is_hotspot <- function(SNPpair, windowSize, timesRecombinationRate,
 }
 
 hotspots_overlap <- function(firstHotspot, secondHotspot) {
-  if (firstHotspot[2] == secondHotspot[1]) {
+  if (isTRUE(firstHotspot[2] == secondHotspot[1])) {
     return(TRUE)
   } else {
     return(FALSE)
@@ -108,10 +108,8 @@ h_i <- 1
 i <- 1
 while (i <= dim(potentialHotspots)[1]) {
   n <- i
-  if (n != dim(potentialHotspots)[1]) {
-    while (hotspots_overlap(potentialHotspots[n,], potentialHotspots[(n+1),])) {
-      n <- n + 1
-    }
+  while (hotspots_overlap(potentialHotspots[n,], potentialHotspots[(n+1),])) {
+    n <- n + 1
   }
   
   hotspotLength <- (potentialHotspots[n,2] - potentialHotspots[i,1])
