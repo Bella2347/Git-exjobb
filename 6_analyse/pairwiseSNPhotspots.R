@@ -56,7 +56,7 @@ args <- commandArgs(trailingOnly = TRUE)
 recFilename <- args[1]    # Read in recombination rate-file
 recTimes <- 10            # The threshold for the recombination rate in hotspots
 limitSnpDensity <- 1      # The minimum SNP density in hotspot regions
-flankingWinSize <- 100000 # The total length of the flanking region
+flankingWinSize <- 200000 # The total length of the flanking region
 minHotspotsLen <- 750     # Minimum length of a hotspot
 outFilename <- args[2]    # File to write output to
 
