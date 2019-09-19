@@ -19,10 +19,10 @@ run5filename <- args[5]
 outFilename <- args[6]
 
 hrun1 <- read.table(run1filename, sep = "\t", header = TRUE)
-hrun2 <- read.table(run1filename, sep = "\t", header = TRUE)
-hrun3 <- read.table(run1filename, sep = "\t", header = TRUE)
-hrun4 <- read.table(run1filename, sep = "\t", header = TRUE)
-hrun5 <- read.table(run1filename, sep = "\t", header = TRUE)
+hrun2 <- read.table(run2filename, sep = "\t", header = TRUE)
+hrun3 <- read.table(run3filename, sep = "\t", header = TRUE)
+hrun4 <- read.table(run4filename, sep = "\t", header = TRUE)
+hrun5 <- read.table(run5filename, sep = "\t", header = TRUE)
 
 hruns <- rbind(hrun1, hrun2, hrun3, hrun4, hrun5)
 hruns <- hruns[order(hruns$Start.position),]
