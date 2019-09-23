@@ -1,3 +1,6 @@
+# Put all hotspots in the same file...
+
+
 minHotspotLen <- 750
 
 overlap <- function(listOfHotspots) {

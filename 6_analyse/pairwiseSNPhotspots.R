@@ -1,3 +1,9 @@
+# All windows need to pass the SNP-density limit and to have a certain number of SNPs
+# this fixed number of SNPs limits how short scaffolds can be used
+# if no potential hotspots are detected the script does not output any thing (handle error)
+# if no hotspots are detected -||-
+
+
 start_time <- Sys.time()
 
 ################### Functions ###################

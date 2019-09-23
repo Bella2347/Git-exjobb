@@ -1,3 +1,8 @@
+# print number of SNPs in each window (to see how well the ends are covered)
+# print SNP density
+# what if window is outside estimation (handle error?)
+
+
 # Command-line argument:
 # Rscript meanRecRate [Linkage-map_windows] [species] [scaffold_name] [recombination_rate_run1] [recombination_rate_run2] [run3] [run4] [run5]
 
