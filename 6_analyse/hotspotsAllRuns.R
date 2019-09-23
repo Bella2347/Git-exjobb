@@ -9,14 +9,14 @@ overlap <- function(listOfHotspots) {
   }
 }
 
-args <- commandArgs(trailingOnly = TRUE)
+argv <- commandArgs(trailingOnly = TRUE)
 
-run1filename <- args[1]
-run2filename <- args[2]
-run3filename <- args[3]
-run4filename <- args[4]
-run5filename <- args[5]
-outFilename <- args[6]
+run1filename <- argv[1]
+run2filename <- argv[2]
+run3filename <- argv[3]
+run4filename <- argv[4]
+run5filename <- argv[5]
+outFilename <- argv[6]
 
 hrun1 <- read.table(run1filename, sep = "\t", header = TRUE)
 hrun2 <- read.table(run2filename, sep = "\t", header = TRUE)
