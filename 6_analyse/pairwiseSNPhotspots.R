@@ -1,3 +1,9 @@
+####### About ###############
+# Takes as input:
+# [out file] [estimated recombination rate file1] [file2] ...
+# And finds hotspots for all files and output them to the same out file
+
+
 ####### Functions ###########
 
 find_start_end_window <- function(firstSNP, secondSNP, windowSize, scaffoldLength) {
