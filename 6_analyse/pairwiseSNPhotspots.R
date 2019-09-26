@@ -28,8 +28,8 @@ find_start_end_window <- function(firstSNP, secondSNP, windowSize, scaffoldLengt
 }
 
 
-potential_hotspot <- function(SNPpair, windowSize, timesRecombinationRate, 
-                              minSNPdensity, recombinationRateAllBases, SNParray) {
+potential_hotspot <- function(SNPpair, windowSize, timesRecombinationRate, minSNPdensity, 
+                              recombinationRateAllBases, SNParray) {
   # A function which takes two SNPs and if the recombination rate between them is a certain
   # times higher than the background they are returned as a hotspot
   # If they are not a hotspot, nothing is returned
@@ -45,6 +45,7 @@ potential_hotspot <- function(SNPpair, windowSize, timesRecombinationRate,
     return(c(as.integer(SNPpair[1]), as.integer(SNPpair[2]), as.numeric(SNPpair[3]), meanRecRateWin, snpDensity))
   }
 }
+
 
 hotspots_overlap <- function(firstHotspot, secondHotspot) {
   # Checks if two hotspots overlap
@@ -154,8 +155,9 @@ main <- function(filename, recTimes, snpDensityLimit, flankingWinSize, minHotspo
     
     # If hotspots were found, write them to file
     if (dim(hotspots)[1] > 0) {
-      hotspots <- cbind(filename, hotspots)
-      write.table(hotspots, outFilename, append = TRUE, sep = "\t", row.names = FALSE, col.names = FALSE)
+      scaffold <- regmatches(filename, regexpr("N\\d+", filename))
+      hotspots <- cbind(scaffold, hotspots)
+      write.table(hotspots, outFilename, append = TRUE, sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
     }
   }
 }
@@ -167,7 +169,7 @@ argv <- commandArgs(trailingOnly = TRUE)
 
 # Write header to outfile
 outFile <- argv[1]
-write("#Filename\tStart_pos\tEnd_post\tLength_of_hotspot", outFile)
+write("#Scaffold\tStart_pos\tEnd_post\tLength_of_hotspot", outFile)
 
 # Find hotspots for each file
 lapply(argv[2:length(argv)], main, recTimes = 10, snpDensityLimit = 1, flankingWinSize = 200000, minHotspotsLen = 750, outFilename = outFile)
