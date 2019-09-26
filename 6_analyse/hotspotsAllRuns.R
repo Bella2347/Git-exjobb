@@ -19,13 +19,13 @@ overlap <- function(listOfHotspots) {
 
 get_hotspots <- function(hotspotsList, nrFiles) {
   
-  hotspots <- as.data.frame(matrix(NA, dim(hotspotsList)[1],3))
-  colnames(hotspots) <- c("Start_SNP", "End_SNP", "Hotspot_length")
+  hotspots <- as.data.frame(matrix(NA, dim(hotspotsList)[1], 4))
+  colnames(hotspots) <- c("Scaffold", "Start_SNP", "End_SNP", "Hotspot_length")
   
   for (i in 1:(dim(hotspotsList)[1] - nrFiles + 1)) {
     
     if (overlap(hotspotsList[i:(i + nrFiles - 1),])) {
-      hotspots[i,] <- c(max(hotspotsList[i:(i + nrFiles - 1),2]), min(hotspotsList[i:(i + nrFiles - 1),3]), 
+      hotspots[i,] <- c(as.character(hotspotsList[i,1]), max(hotspotsList[i:(i + nrFiles - 1),2]), min(hotspotsList[i:(i + nrFiles - 1),3]), 
                         min(hotspotsList[i:(i + nrFiles - 1),3]) - max(hotspotsList[i:(i + nrFiles - 1),2]))
     }
   }
@@ -34,14 +34,13 @@ get_hotspots <- function(hotspotsList, nrFiles) {
   return(hotspots)
 }
 
-main <- function(argv) {
-  argv <- commandArgs(trailingOnly = TRUE)
+main <- function(fileList) {
   
-  outFilename <- argv[1]
-  write("#Start_pos\tEnd_post\tLength_of_hotspot", outFilename)
+  outFilename <- fileList[1]
+  write("#Scaffold\tStart_pos\tEnd_post\tLength_of_hotspot", outFilename)
   
   # Read in the files
-  hotspotsRuns <- lapply(argv[2:length(argv)], read.table, sep = "\t", header = FALSE)
+  hotspotsRuns <- lapply(fileList[2:length(fileList)], read.table, sep = "\t", header = FALSE)
   
   # rbind the datframes to one
   hotspotsAll <- do.call(rbind, hotspotsRuns)
@@ -51,21 +50,24 @@ main <- function(argv) {
   hotspotsAllSorted <- hotspotsAll[order(hotspotsAll$Scaffold, hotspotsAll$Start_SNP),]
   
   # Count how many infiles there are
-  nrInputFiles <- length(argv) - 1
+  nrInputFiles <- length(fileList) - 1
   
   # if five enteries next to each other overlap, return as hotspot if the overlap is at least 750
   hotspots <- get_hotspots(hotspotsAllSorted, nrInputFiles)
   
   # if we got any hotspots append to file with: scaffoldname, start, end, length
   if (length(unlist(hotspots)) > 0) {
-    write.table(hotspots, outFilename, append = TRUE, sep = "\t", row.names = FALSE, col.names = FALSE)
+    write.table(hotspots, outFilename, append = TRUE, sep = "\t", row.names = FALSE, col.names = FALSE,
+                quote = FALSE)
   }
 }
 
 
 ########## Execution ######################
 
-main()
+argv <- commandArgs(trailingOnly = TRUE)
+
+main(argv)
 
 
 
