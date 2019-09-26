@@ -10,6 +10,7 @@ index_from_one <- function(recombinationRate) {
 }
 
 main <- function(fileList) {
+  
   outfile <- fileList[1]
   
   # Read in the input files
@@ -33,9 +34,8 @@ main <- function(fileList) {
   # Calculate the mean rec rate for each SNP pair
   meanRecRate <- apply(allRunsRecRate, 1, mean)
   
-  # Bind the mean rec rate to the positions
+  # Bind the mean rec rate to the scaffold and positions
   recRate <- cbind(recRate, meanRecRate)
-  colnames(recRate) <- c("Start SNP", "End SNP", "Mean rec. rate over all runs")
   
   # Write mean rec. rate to file, no column names since we append
   write.table(recRate, outfile, append = TRUE, sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
