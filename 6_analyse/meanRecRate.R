@@ -21,8 +21,11 @@ main <- function(fileList) {
   # Bind all columns
   allRuns <- do.call(cbind, infilesIndexOne)
   
-  # Save the positions
-  recRate <- allRuns[,1:2]
+  # Get the scaffold
+  scaffold <- regmatches(fileList[2], regexpr("N\\d+", fileList[2]))
+  
+  # Save the positions and which scaffold it is
+  recRate <- cbind(scaffold, allRuns[,1:2])
   
   # Creat data frame with only the rec rate
   allRunsRecRate <- allRuns[,c(3,6,9,12,15)]
@@ -35,7 +38,7 @@ main <- function(fileList) {
   colnames(recRate) <- c("Start SNP", "End SNP", "Mean rec. rate over all runs")
   
   # Write mean rec. rate to file, no column names since we append
-  write.table(recRate, outfile, append = TRUE, sep = "\t", row.names = FALSE, col.names = FALSE)
+  write.table(recRate, outfile, append = TRUE, sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
   
 }
 
