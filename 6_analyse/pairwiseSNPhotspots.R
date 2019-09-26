@@ -118,10 +118,6 @@ concatenate_hotspots <- function(potentialHotspots, minimumHotspotLength) {
   return(hotspots)
 }
 
-stop_quietly <- function(...) {
-  blankMsg <- sprintf("\r%s\r", paste(rep(" ", getOption("width")-1L), collapse=" "));
-  stop(simpleError(blankMsg));
-}
 
 ############# Main function ###############
 
