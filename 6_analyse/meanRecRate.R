@@ -1,5 +1,9 @@
+##### About #######
+# Takes one file from each run for the same scaffold, calculates the mean rate at each position
+# Appends to out file (so all can be stored in one file)
 # Command-line argument:
 # [out file] [recombination_rate_run1] [recombination_rate_run2] [run3] [run4] [run5]
+# Header to the outfile is: Scaffold, Start, End, Length
 
 index_from_one <- function(recombinationRate) {
   # Increases the positions with one to make the indexing from 1
