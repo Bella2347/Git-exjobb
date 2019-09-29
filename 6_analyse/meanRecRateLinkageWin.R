@@ -60,8 +60,10 @@ mean_in_win <- function(linkageWin, recombinationRate) {
     }
 
     meanRecRate <- recRateSum/(endSNP - startSNP)
+    
+    endSNP <- endSNP - 1
 
-    meanRecRateWin <- c(linkageWin[1:4], startSNP, endSNP, meanRecRate)
+    meanRecRateWin <- c(linkageWin[1:4], as.character(startSNP), as.character(endSNP), meanRecRate)
 
   } else {
 
@@ -92,6 +94,8 @@ main <- function(fileList) {
   
   # Sort the results on scaffold
   meanRecRateWin <- meanRecRateWin[order(meanRecRateWin$Scaffold, meanRecRateWin$LinkWin_start),]
+  
+  #options(scipen = 999)
   
   write.table(meanRecRateWin, outfile, append = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
