@@ -14,7 +14,47 @@
 # [hotspots parva] [parva rec. rate estimate]
 # [hotspots taiga] [taiga rec. rate estimate]
 
+recRate_at_bases_in_win <- function(window, recombinationRateArray) {
+  # WinEnd is inclusive
+  
+  recRateScaffold <- recombinationRateArray[recombinationRateArray[,1] == window[1], ]
+  
+  snps <- recRateScaffold[as.numeric(recRateScaffold[,2]) <= as.numeric(window[3]) & 
+                            as.numeric(recRateScaffold[,3]) > as.numeric(window[2]),]
+  
+  baseArray <- array(NA, (as.numeric(window[3]) - as.numeric(window[2])))
+  
+  for (i in 1:dim(snps)[1]) {
+    
+    startIndex <- (as.numeric(snps[i,2]) - as.numeric(window[2]) + 1)
+    endIndex <- (as.numeric(snps[i,3]) - as.numeric(window[2]))
 
+    if (startIndex < 1) {
+      startIndex <- 1
+    }
+    if (endIndex > as.numeric(window[2])) {
+      endIndex <- as.numeric(window[2])
+    }
+    
+    baseArray[startIndex:endIndex] <- snps[i,4]
+    
+  }
+  
+  return(baseArray)
+  
+}
+
+main <- function(fileList) {
+  
+  hotspots <- as.matrix(read.table(fileList[2], sep = "\t", header = FALSE))
+  
+  recRate <- as.matrix(read.table(fileList[1], sep = "\t", header = FALSE))
+  
+  surrAllHotspots <- apply(hotspots, 1, recRate_at_bases_in_win, recombinationRateArray = recRate)
+  
+  meanSurr <- apply(surrAllHotspots, 2, mean, na.rm = TRUE)
+  
+}
 
 # Load mean rec rate
 # Load hotspots
@@ -28,3 +68,12 @@
 
 # Write data to file
 # Plot data
+
+argv <- commandArgs(trailingOnly = TRUE)
+
+main(argv)
+
+
+
+
+
