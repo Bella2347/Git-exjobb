@@ -1,79 +1,73 @@
-# Give positions for hotspots
-# Give mean rec. rate
-# Should be able to take hotspots found in one species and calculate the surrounding in the other species:
+# Takes an estimated recombination rate and hotspots and calculates the mean in the surrounding of the hotspots
+# Can take any file of recombination rate and hotspots, does not have to be the same species
 
-# [unique hotspots parva] [parva rec. rate estimate]
-# [unique hotspots parva] [taiga rec. rate estimate]
+# Input:
+# [Recombination rate] [Hotspots] [Prefix for output]
 
-# [unique hotspots taiga] [taiga rec. rate estimate]
-# [unique hotspots taiga] [parva rec. rate estimate]
+##### Functions #####
 
-# [shared hotspots] [parva rec. rate estimate]
-# [shared hotspots] [taiga rec. rate estimate]
-
-# [hotspots parva] [parva rec. rate estimate]
-# [hotspots taiga] [taiga rec. rate estimate]
-
-recRate_at_bases_in_win <- function(window, recombinationRateArray) {
-  # WinEnd is inclusive
+recRate_at_bases_in_win <- function(hotspot, recombinationRateArray) {
+  # Takes a hotspot and finds the surrounding rate
+  # Outputs the rate normalized to the mean of the surrounding
   
-  recRateScaffold <- recombinationRateArray[recombinationRateArray[,1] == window[1], ]
+  hotspotMiddle <- as.numeric(hotspot[4])/2 + as.numeric(hotspot[2])
+  windowLength <- 40000
+  # Start and stop of window
+  window <- c((hotspotMiddle - windowLength/2), (hotspotMiddle + windowLength/2))
   
-  snps <- recRateScaffold[as.numeric(recRateScaffold[,2]) <= as.numeric(window[3]) & 
-                            as.numeric(recRateScaffold[,3]) > as.numeric(window[2]),]
+  recRateScaffold <- recombinationRateArray[recombinationRateArray[,1] == hotspot[1], ]
   
-  baseArray <- array(NA, (as.numeric(window[3]) - as.numeric(window[2])))
+  snps <- recRateScaffold[as.numeric(recRateScaffold[,2]) <= window[2] & 
+                            as.numeric(recRateScaffold[,3]) > window[1],]
+  
+  baseArray <- array(NA, (windowLength + 1))
   
   for (i in 1:dim(snps)[1]) {
     
-    startIndex <- (as.numeric(snps[i,2]) - as.numeric(window[2]) + 1)
-    endIndex <- (as.numeric(snps[i,3]) - as.numeric(window[2]))
+    startIndex <- (as.numeric(snps[i,2]) - window[1] + 1)
+    endIndex <- (as.numeric(snps[i,3]) - window[1])
 
     if (startIndex < 1) {
       startIndex <- 1
     }
-    if (endIndex > as.numeric(window[2])) {
-      endIndex <- as.numeric(window[2])
+    if (endIndex > (windowLength + 1)) {
+      endIndex <- windowLength + 1
     }
     
-    baseArray[startIndex:endIndex] <- snps[i,4]
+    baseArray[startIndex:endIndex] <- as.numeric(snps[i,4])
     
   }
   
-  return(baseArray)
+  baseArrayNorm <- baseArray/mean(baseArray, na.rm = TRUE)
+  
+  return(baseArrayNorm)
   
 }
 
 main <- function(fileList) {
-  
-  hotspots <- as.matrix(read.table(fileList[2], sep = "\t", header = FALSE))
+  # Takes input files and finds the surrounding for each hotspot and
+  # then take the mean over all hotspots
+  # Write surrounding to file and plot
   
   recRate <- as.matrix(read.table(fileList[1], sep = "\t", header = FALSE))
   
+  hotspots <- as.matrix(read.table(fileList[2], sep = "\t", header = FALSE))
+  
+  outPrefix <- fileList[3]
+  
   surrAllHotspots <- apply(hotspots, 1, recRate_at_bases_in_win, recombinationRateArray = recRate)
   
-  meanSurr <- apply(surrAllHotspots, 2, mean, na.rm = TRUE)
+  meanSurr <- apply(surrAllHotspots, 1, mean, na.rm = TRUE)
+  
+  write.table(meanSurr, paste(outPrefix, "txt", sep = "."), append = FALSE, sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  
+  png(paste(outPrefix, "png", sep = "."))
+  plot(-20000:20000, meanSurr, type = "s", ylab = "Relative recombination rate", xlab = "Physical distance (bp)", 
+       xlim = c(-20000, 20000), main = "Mean recombination rate surrounding hotspots")
+  dev.off()
   
 }
-
-# Load mean rec rate
-# Load hotspots
-
-# Make array with rec. rate/base
-
-# Find middle of hotspot
-# Take the 40kb window that surrounds the middle of the hotspot, if exceeds over end: add NA which are omitted when calculating mean
-
-# Take the mean at each position in the 40kb over all hotspots
-
-# Write data to file
-# Plot data
 
 argv <- commandArgs(trailingOnly = TRUE)
 
 main(argv)
-
-
-
-
-
