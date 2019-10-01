@@ -164,8 +164,7 @@ main <- function(filename, recTimes, snpDensityLimit, flankingWinSize, minHotspo
 argv <- commandArgs(trailingOnly = TRUE)
 
 # Write header to outfile
-outFile <- argv[1]
-write("#Scaffold\tStart_pos\tEnd_post\tLength_of_hotspot", outFile)
+outFile <- argv[2]
 
-# Find hotspots for each file
-lapply(argv[2:length(argv)], main, recTimes = 10, snpDensityLimit = 1, flankingWinSize = 200000, minHotspotsLen = 750, outFilename = outFile)
+main(argv[1], recTimes = 10, snpDensityLimit = 1, flankingWinSize = 200000, minHotspotsLen = 750, outFilename = outFile)
+
