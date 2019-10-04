@@ -42,20 +42,23 @@ processFile <- function(filepath, linkageWins, pos) {
     # Extract windows on a specific scaffold (first element on line is the scaffold name)
     linkageScaff <- linkageWins[linkageWins[,2] == missingGeno[1],]
     
+    
     # Take only the positions on the same scaffold as the line
     posScaff <- pos[pos[,1] == missingGeno[1],]
     
     # Take only the position of all SNPs on that scaffold, 
     # account for the situation when there is only one SNP-pair on the scaffold
-    if(dim(posScaff)[1] > 1) {
+    if (dim(posScaff)[1] > 1) {
       posSNP <- array(c(posScaff[1,2], posScaff[,3]))
-    } else {
+    } else if (dim(posScaff)[1] == 1) {
       posSNP <- array(c(posScaff[2], posScaff[3]))
+    } else {
+      # Hop to next line... since I counted missing for all scaff but did not get estimates for all
     }
-    
     
     # Put together the posistions and missing genotypes, will always have at least the length 2
     snpsInScaff <- cbind(posSNP, missingGeno[2:length(missingGeno)])
+    
     
     # For each window find the mean
     missingWin <- as.matrix(apply(linkageScaff, 1, mean_in_win, snps = snpsInScaff))
