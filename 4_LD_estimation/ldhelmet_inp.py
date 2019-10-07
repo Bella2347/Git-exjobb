@@ -6,9 +6,11 @@ import time
 def write_id(name, file):
         file.write('>sample_' + name + '\n')
 
-def write_seq(line, file):
-	sequence = ''.join(line)
-	file.write(sequence + '\n')
+def write_seq(line_list, file):
+	line_list_2nd_ele = line_list[::2]
+	sequence = ['N' if x=='\x00' else x for x in line_list_2nd_ele]
+	joinedSeq = ''.join(sequence)
+	file.write(joinedSeq + '\n')
 
 
 
@@ -51,10 +53,12 @@ sample_id = 'None'
 
 with open(sys.argv[1], 'r') as fastphase_file:
 	for line in fastphase_file:
-
-		line_split = line.strip('\n').split(' ')
+  
+		line = line.strip('\n')
+		line_list = list(line)
 
 		if line.startswith('# ID'):
+			line_split = line.split(' ')
 			sample_id = line_split[2]
 			if len(subset_samples) == 0 or sample_id in subset_samples:
 				haplotype = 1
@@ -63,12 +67,12 @@ with open(sys.argv[1], 'r') as fastphase_file:
 				haplotype = 0
 
 		elif haplotype == 1:
-			write_seq(line_split, out_file)
+			write_seq(line_list, out_file)
 			haplotype = 2
 
 		elif haplotype == 2:
 			write_id(sample_id + '_' + str(haplotype), out_file)
-			write_seq(line_split, out_file)
+			write_seq(line_list, out_file)
 			haplotype = 0
 
 
