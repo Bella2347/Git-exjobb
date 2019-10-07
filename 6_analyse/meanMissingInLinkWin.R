@@ -1,3 +1,6 @@
+# Calculates the mean numer of missing snps in linkage windows
+# Command: [rec. rate] [linkage windows] [missing] [out file]
+
 
 mean_in_win <- function(linkageWin, snps) {
   # Takes as input a window and the SNPs present on that scaffold
@@ -22,7 +25,7 @@ mean_in_win <- function(linkageWin, snps) {
 }
 
 
-processFile <- function(filepath, linkageWins, pos) {
+processFile <- function(filepath, linkageWins, pos, outfile) {
   # Reads in a line at a time from a file
   # Finds the mean missing genotypes [missing/SNP] for each linkage window for that scaffold
   # Append to file and process next line
@@ -66,7 +69,7 @@ processFile <- function(filepath, linkageWins, pos) {
       missingWin <- t(missingWin)
     
       # Append to file
-      write.table(missingWin, "out.txt", sep = "\t", append = TRUE, quote = FALSE, 
+      write.table(missingWin, outfile, sep = "\t", append = TRUE, quote = FALSE, 
                   col.names = FALSE, row.names = FALSE)
     }
   }
@@ -74,9 +77,11 @@ processFile <- function(filepath, linkageWins, pos) {
   close(con)
 }
 
+argv <- commandArgs(trailingOnly = TRUE)
 
-linkageMapWin <- as.matrix(read.table("../Data/200kb-win/Chr.Rec.200kb.5kGap.txt", sep = "\t", header = TRUE))
-recRate <- as.matrix(read.table("parvaGQ30.meanRecRate.txt", sep = "\t", header = FALSE))
+recRate <- as.matrix(read.table(argv[1], sep = "\t", header = FALSE))
+linkageMapWin <- as.matrix(read.table(argv[2], sep = "\t", header = TRUE))
 
-processFile("missingParva.txt", linkageMapWin, recRate)
+
+processFile(argv[3], linkageMapWin, recRate, argv[4])
 
