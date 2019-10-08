@@ -32,7 +32,7 @@ recombination_rate_each_base <- function(recombinationRate, win) {
 }
 
 
-mean_in_win <- function(linkageWin, recombinationRate) {
+mean_in_win <- function(linkageWin, recombinationRate, outFile) {
   # Takes a window and computes the mean recombination rate in that window
   
   # Takes all SNP pairs in the linkage win
@@ -44,7 +44,11 @@ mean_in_win <- function(linkageWin, recombinationRate) {
   
   # If no SNP pairs are returned, or there are no SNPs in the window
   # NA is returned
-  if (dim(snpsWin)[1] > 1) {
+  if (length(snpsWin) == 0) {
+    
+    meanRecRateWin <- c(linkageWin[1:4], "NA", "NA", "NA")
+    
+  } else if (dim(snpsWin)[1] > 1) {
     
     recRateVar <- var(as.numeric(snpsWin[,4]))
     
@@ -58,12 +62,9 @@ mean_in_win <- function(linkageWin, recombinationRate) {
     
     meanRecRateWin <- c(linkageWin[1:4], dim(snpsWin)[1], snpsWin[4], "NA")
     
-  } else {
-
-    meanRecRateWin <- c(linkageWin[1:4], "NA", "NA", "NA")
   }
 
-  return(meanRecRateWin)
+  write.table(t(meanRecRateWin), outFile, append = TRUE, sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
   
 }
 
@@ -76,20 +77,11 @@ main <- function(fileList) {
   # Read in linkage windows
   linkageMapWin <- as.matrix(read.table(fileList[2], sep = "\t", header = TRUE))
   
-  outfile <- fileList[3]
+  write("Chr\tScaffold\tLinkWin_start\tLinkWin_end\tNumber_of_SNPs\tMean_recRate\tVariance", fileList[3], append = FALSE)
   
   # Get the mean recombination rate for all windows
-  meanRecRateWin <- apply(linkageMapWin, 1, mean_in_win, recombinationRate = recRate)
+  apply(linkageMapWin, 1, mean_in_win, recombinationRate = recRate, outFile = fileList[3])
   
-  # Transform to a data.frame and add column names
-  meanRecRateWin <- as.data.frame(t(meanRecRateWin))
-  colnames(meanRecRateWin) <- c("Chr", "Scaffold", "LinkWin_start", "LinkWin_end", "#_SNPs_in_window", 
-                                "Mean_recRate", "Variance")
-  
-  # Sort the results on scaffold
-  meanRecRateWin <- meanRecRateWin[order(meanRecRateWin$Scaffold, meanRecRateWin$LinkWin_start),]
-  
-  write.table(meanRecRateWin, outfile, append = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
 
 
