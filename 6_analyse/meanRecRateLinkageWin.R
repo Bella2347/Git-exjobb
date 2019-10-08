@@ -48,7 +48,7 @@ mean_in_win <- function(linkageWin, recombinationRate, outFile) {
     
     meanRecRateWin <- c(linkageWin[1:4], "NA", "NA", "NA")
     
-  } else if (dim(snpsWin)[1] > 1) {
+  } else if (length(snpsWin) > 4) {
     
     recRateVar <- var(as.numeric(snpsWin[,4]))
     
@@ -58,9 +58,9 @@ mean_in_win <- function(linkageWin, recombinationRate, outFile) {
     
     meanRecRateWin <- c(linkageWin[1:4], dim(snpsWin)[1], meanRecRate, recRateVar)
   
-  } else if (dim(snpsWin)[1] == 1) {
+  } else if (length(snpsWin) == 4) {
     
-    meanRecRateWin <- c(linkageWin[1:4], dim(snpsWin)[1], snpsWin[4], "NA")
+    meanRecRateWin <- c(linkageWin[1:4], "1", snpsWin[4], "NA")
     
   }
 
