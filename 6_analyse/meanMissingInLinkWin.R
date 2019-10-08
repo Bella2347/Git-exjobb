@@ -11,7 +11,7 @@ mean_in_win <- function(linkageWin, snps) {
                     as.numeric(snps[,1]) <= as.numeric(linkageWin[4]),]
   
   if (length(snpsInWin) < 1) {                         # If there are no SNPs in that window, return NA
-    return()
+    meanMissing <- NA
   } else if (length(snpsInWin) == 2) {                 # If there are only one SNP
     meanMissing <- as.numeric(snpsInWin[2])
   } else {                                             # If there are more than one SNP, take the mean
@@ -54,9 +54,9 @@ processFile <- function(filepath, linkageWins, pos, outfile) {
     
       # Take only the position of all SNPs on that scaffold, 
       # account for the situation when there is only one SNP-pair on the scaffold
-      if (dim(posScaff)[1] > 1) {
+      if (length(posScaff) > 4) {
         posSNP <- array(c(posScaff[1,2], posScaff[,3]))
-      } else if (dim(posScaff)[1] == 1) {
+      } else {
         posSNP <- array(c(posScaff[2], posScaff[3]))
       }
     
@@ -65,9 +65,14 @@ processFile <- function(filepath, linkageWins, pos, outfile) {
     
     
       # For each window find the mean
-      missingWin <- as.matrix(apply(linkageScaff, 1, mean_in_win, snps = snpsInScaff))
+      # If there are only one linkage window, apply does not work
+      if (length(linkageScaff) > 5) {
+        missingWin <- as.matrix(apply(linkageScaff, 1, mean_in_win, snps = snpsInScaff))
+      } else {
+        missingWin <- mean_in_win(linkageScaff, snps = snpsInScaff)
+      }
+      
       missingWin <- t(missingWin)
-    
       # Append to file
       write.table(missingWin, outfile, sep = "\t", append = TRUE, quote = FALSE, 
                   col.names = FALSE, row.names = FALSE)
