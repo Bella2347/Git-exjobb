@@ -1,1 +1,0 @@
-grep '^P' .inp | perl -pe 's/\s/\n/g' > out
