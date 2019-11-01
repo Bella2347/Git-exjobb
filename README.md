@@ -8,7 +8,7 @@ ldhelmet_inp.py		: was used to create LDhelmet input-files from fastPHASE v1.4 o
 ancestral_from_vcf.py	: was used to test if at least two of three groups are monomorphic for the same allele
 prior_prob_state.py	: create the ancestral files used in LDhelmet from the output from the ancestral_from_vcf.py script
 
-The files for the analysis with R were used to get the means and other results. The ones in the directory analysis_local were used localy on my computer and can not be used as they are but shows how correlation coefficents were found and plots were made.
+The files for the analysis with R were used to get the means and other results. The ones in the directory analysis_local were used locally on my computer and can not be used as they are but shows how correlation coefficients were found and plots were made.
 
 not_used_scripts 	: not used in the final project
 
